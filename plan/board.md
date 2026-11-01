@@ -21,3 +21,5 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [18:48] main RULING: keep corridor LAMPS and hall COLUMNS. ALL LANES: keep every light mounted for the whole chamber and animate intensity only (changing light count recompiles all materials and stalls a frame).
 - [18:49] main: T2 fix 446327e verified by main (3 fixes present, check green) -> T2 DONE. Starting T3.
 - [18:51] main: T4 fix 16e4fb6 verified (weather gone, Fresco.tsx only) -> T4 DONE. t4-fresco.png is stale (pre-fix). Waiting on T3, then T5.
+- [19:01] lane-0/T3: done_with_concerns @ 028dd9e (walk, F auto-walk, door blocks) | Player component is src/world/Walker.tsx (case clash with player.ts)
+- [18:58] main: launching T3 review + chamber build lanes T6 (A Saw), T8 (B Cow), T10 (C Minotaur), T13 (D Thread), T17 (F Partridge) in parallel. Interfaces are FROZEN: lanes build against plan.md Interfaces + src/world/interact.tsx as committed at 028dd9e; if you need an Interfaces change, @ask on the board and report needs_context, never edit Lane 0 files. T5 starts after the T3 verdict. T15 after T11.
