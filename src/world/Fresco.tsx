@@ -18,14 +18,6 @@ function grain(g: CanvasRenderingContext2D, W: number, H: number, r: () => numbe
   nc.putImageData(d, 0, 0); g.fillStyle = g.createPattern(n, 'repeat')!; g.fillRect(0, 0, W, H);
 }
 
-// after the art: paint has lost a little pigment, and the same grain sits over everything
-function weather(g: CanvasRenderingContext2D, W: number, H: number) {
-  const r = rng(31);
-  g.fillStyle = F.plaster + '8c';
-  for (let i = 0; i < 160; i++) { g.beginPath(); g.ellipse(r() * W, r() * H, 1 + r() * W * 0.006, 1 + r() * W * 0.004, r() * 3, 0, 6.28); g.fill(); }
-  grain(g, W, H, r);
-}
-
 function plaster(g: CanvasRenderingContext2D, W: number, H: number) {
   const r = rng(7);
   g.fillStyle = F.plaster; g.fillRect(0, 0, W, H);
@@ -33,7 +25,7 @@ function plaster(g: CanvasRenderingContext2D, W: number, H: number) {
     const x = r() * W, y = r() * H, rad = (0.15 + r() * 0.3) * Math.max(W, H) * 0.5;
     const b = g.createRadialGradient(x, y, 0, x, y, rad);
     b.addColorStop(0, (i % 2 ? F.earth : F.blue) + '30'); b.addColorStop(1, '#00000000');
-    g.fillStyle = b; g.fillRect(0, 0, W, H);
+    g.fillStyle = b; g.fillRect(x - rad, y - rad, 2 * rad, 2 * rad);
   }
   grain(g, W, H, r);
   g.strokeStyle = F.line + '99'; g.lineWidth = Math.max(1, W / 1200); // hairline cracks
@@ -89,9 +81,9 @@ export function Fresco(p: {
     g.clearRect(0, 0, W, H); plaster(g, W, H);
     const b = kind === 'none' ? 0 : Math.min(W, H) * 0.075;
     if (kind !== "none") border(g, W, H, kind, b);
-    const m = b ? b * 0.86 + b * 0.06 : 0; // just inside the inner rule
+    const m = b * 0.92; // just inside the inner rule
     g.save(); g.beginPath(); g.rect(m, m, W - 2 * m, H - 2 * m); g.clip(); g.translate(m, m);
-    pf.current(g, W - 2 * m, H - 2 * m); g.restore(); weather(g, W, H);
+    pf.current(g, W - 2 * m, H - 2 * m); g.restore();
     tex.needsUpdate = true;
   }, [tex, version, kind]);
   return (
