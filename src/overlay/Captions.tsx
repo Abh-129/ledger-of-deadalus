@@ -24,6 +24,7 @@ export default function Captions() {
         {cap.latin ? <em lang="la">{cap.t}</em> : cap.t}
         {cap.gloss && <span className="gloss mono">{cap.gloss}</span>}
       </p>
+      {src && <div className="src mono">{src}</div>}
     </div>
   );
 }

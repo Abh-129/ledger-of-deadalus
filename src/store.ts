@@ -36,6 +36,7 @@ export const live = {
 export type At = ChapterKey | 'flight' | 'balance';
 const atRaw = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('at') : null;
 export const AT: At | null = atRaw === 'flight' || atRaw === 'balance' || ORDER.includes(atRaw as ChapterKey) ? (atRaw as At) : null;
+if (AT === 'flight') live.set({ gameState: 'prompt' });
 const before: ChapterKey[] = AT === 'balance' ? ORDER : AT === 'flight' ? ORDER.slice(0, 4) : AT ? ORDER.slice(0, ORDER.indexOf(AT)) : [];
 const romans = (ks: ChapterKey[]) => ks.map((k) => chapterCopy(k).id);
 

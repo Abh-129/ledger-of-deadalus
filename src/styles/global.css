@@ -48,7 +48,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .captions.hidden { display: none; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .continue { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); }
-.continue.entry { top: auto; bottom: 34px; right: 480px; transform: none; }
 
 /* top-right controls */
 .top-right { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; }
@@ -98,9 +97,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .modal { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 16px; text-align: center; background: rgba(10, 18, 28, 0.7); backdrop-filter: blur(3px); padding: 16px; }
 .modal h3 { font-family: var(--serif-display); font-weight: 400; letter-spacing: 0.08em; font-size: clamp(26px, 4vw, 44px); margin: 0; }
 .modal p { margin: 0; color: var(--dim); max-width: 46ch; }
-.stick { position: fixed; left: 24px; bottom: 90px; width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(232, 225, 210, 0.35); touch-action: none; }
-.stick i { position: absolute; left: 40px; top: 40px; width: 40px; height: 40px; border-radius: 50%; background: rgba(224, 167, 62, 0.5); }
-.lookzone { position: fixed; right: 0; top: 0; width: 55%; height: 70%; touch-action: none; }
 
 /* final balance */
 .final { position: fixed; inset: 0; overflow: auto; background: rgba(10, 18, 28, 0.9); display: grid; place-items: center; padding: 24px 16px; }
@@ -135,7 +131,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .captions { left: 40px; right: 8px; max-width: none; bottom: 90px; }
   .ledger { left: 0; right: 0; bottom: 0; width: 100%; max-height: 62vh; border-radius: 12px 12px 0 0; }
   .book { right: 10px; bottom: 10px; width: 52px; height: 68px; }
-  .continue { right: 12px; top: auto; bottom: 90px; transform: none; } .continue.entry { right: 12px; bottom: 20px; }
+  .continue { right: 12px; top: auto; bottom: 90px; transform: none; }
   .hud { bottom: 10px; gap: 12px; } .gauge { width: 100px; }
   .spread { grid-template-columns: 1fr; } .spread::after { display: none; }
   .glory { right: 62px; }
