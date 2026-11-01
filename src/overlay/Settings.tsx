@@ -4,7 +4,7 @@ import { useStore } from '../store';
 export default function Settings() {
   const { settings: s, setSetting, showSettings } = useStore();
   const toggle = () => useStore.setState((x) => ({ showSettings: !x.showSettings }));
-  const check = (k: 'sound' | 'reducedMotion' | 'unlockAll' | 'showControls' | 'assist') => (
+  const check = (k: 'sound' | 'reducedMotion') => (
     <label key={k}>{L[k]}<input type="checkbox" checked={s[k]} onChange={(e) => setSetting(k, e.target.checked)} /></label>
   );
   return (
@@ -20,7 +20,7 @@ export default function Settings() {
               <option value="high">High</option><option value="low">Low</option>
             </select>
           </label>
-          {check('reducedMotion')}{check('unlockAll')}{check('showControls')}{check('assist')}
+          {check('reducedMotion')}
         </div>
       )}
     </>

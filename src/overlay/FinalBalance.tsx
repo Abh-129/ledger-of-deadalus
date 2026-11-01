@@ -4,7 +4,7 @@ import { useStore } from '../store';
 import { LedgerRows } from './Ledger';
 
 export function FinalBalance() {
-  const { reset, go, set } = useStore();
+  const { reset, set } = useStore();
   return (
     <div className="final">
       <div className="spread">
@@ -22,7 +22,7 @@ export function FinalBalance() {
           <p className="body">{FINAL.body}</p>
           <div className="actions">
             <button className="btn small" onClick={reset}>{FINAL.playAgain}</button>
-            <button className="btn small" onClick={() => go('labyrinth')}>{FINAL.walk}</button>
+            <button className="btn small" onClick={reset}>{FINAL.walk}</button>
             <button className="btn small" onClick={() => set({ showSources: true })}>Sources</button>
           </div>
         </section>

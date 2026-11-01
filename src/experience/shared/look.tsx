@@ -6,6 +6,15 @@ export const COL = {
   night: '#0A121C', deepSea: '#10283A', lapis: '#2457A0', ochre: '#E0A73E', red: '#B3372B',
   limestone: '#E8E1D2', ink: '#15110E', olive: '#6F7A4E', dim: '#8A97A6', wood: '#8a5a34', skin: '#7a5a45',
 };
+// Every colour, light and fog value chambers use. Placeholders until T5 applies direction C.
+export const LOOK = {
+  stone: { wall: '#10283A', floor: '#10283A', ceiling: '#0A121C', ambient: 0.5, hemiSky: '#6f8fc4', hemiGround: '#10283A', fog: '#10283A', fogDensity: 0.04, minAmbient: 0.5 },
+  moon: { color: '#C9D6E8', intensity: 26, distance: 10 },
+  craft: { color: COL.ochre, emissive: 2.2 },
+  cost: { color: '#D4584A', intensity: 26, distance: 10 },
+  sky: { day: ['#6f9fd6', '#a9c8e8', '#e8e1d2'] as [string, string, string], dawn: ['#16304a', '#8a97a6', '#e8c9a0'] as [string, string, string] },
+  fresco: { plaster: '#E8E1D2', line: '#15110E', blue: '#2457A0', earth: '#9a7a52', skin: '#b08a68', skinPale: '#d8c4a8', green: '#6F7A4E', sea: '#10283A', pxPerM: 256 },
+};
 // >1 so the bloom pass picks up ochre emissives (warm light = Daedalus's craft)
 export const GLOW = new THREE.Color(COL.ochre).multiplyScalar(2.2);
 export const RED_GLOW = new THREE.Color(COL.red).multiplyScalar(2.4);

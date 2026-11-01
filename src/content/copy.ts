@@ -101,23 +101,21 @@ export const partridgeOpening = {
 };
 
 export const UI = {
-  title: 'THE LEDGER OF DAEDALUS',
+  title: 'THE LABYRINTH OF DAEDALUS',
   subtitle: 'Six inventions. Every one of them worked.',
   begin: 'Begin', soundOn: 'Sound on', soundOff: 'Sound off', sources: 'Sources',
-  cont: 'Continue', pause: 'Paused', resume: 'Resume',
-  skip: 'Skip, tell me what happens', back: 'Back to chapters',
+  cont: 'Continue', pause: 'Paused', resume: 'Click to resume',
+  skip: 'Skip, tell me what happens',
+  use: 'Look closer', useKey: 'E or click', follow: 'Follow the thread',
+  controls: 'WASD or arrows to walk. Drag to look. E or click to use.',
+  controlsTouch: 'Drag to look. Tap Follow the thread to walk.', takeOff: 'Take off',
   loading: ['Sharpening the saw', 'Stretching the hide', 'Winding the thread', 'Warming the wax'],
   solvedHead: 'SOLVED', costHead: 'COST',
   assemble: 'Assemble', parts: ['FRAME', 'PANELS', 'WHEELS', 'HIDE'],
-  scrollHint: 'Scroll, press Space, or Continue',
   noWebgl: 'Your browser could not start 3D graphics, so here is the whole myth as a page.',
 };
 
 export const GAME = {
-  labyrinthPrompt: 'Click to take up the torch',
-  labyrinthPromptTouch: 'Tap to take up the torch',
-  threadLabel: 'THREAD LET OUT',
-  threadUsed: 'THREAD USED',
   minotaurDead: 'The Minotaur is dead. Now follow the thread back.',
   flightPrompt: 'Hold to fly. Release to glide.',
   flightControls: 'Mouse button, Space, or touch to flap',
@@ -146,5 +144,4 @@ export const FINAL = {
 
 export const SETTINGS_LABELS = {
   sound: 'Sound', quality: 'Graphics quality', reducedMotion: 'Reduced motion',
-  unlockAll: 'Unlock all chapters', showControls: 'Show controls', assist: 'Labyrinth hints',
 };

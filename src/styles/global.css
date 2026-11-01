@@ -11,12 +11,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #ui { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
 #ui > * { pointer-events: auto; }
 #ui .nopointer { pointer-events: none; }
-#fx-black, #fx-flash, #veil { position: fixed; inset: 0; pointer-events: none; opacity: 0; }
+#fx-black, #fx-flash { position: fixed; inset: 0; pointer-events: none; opacity: 0; }
 #fx-black { z-index: 20; background: var(--night); }
 #fx-flash { z-index: 21; }
-#veil { z-index: 30; background: var(--night); transition: opacity 600ms ease; }
-#veil.on { opacity: 1; }
-.reduced #veil { transition-duration: 150ms; }
 
 /* buttons */
 .btn {
@@ -40,15 +37,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @keyframes carve { 0% { opacity: 0; filter: brightness(2.2) blur(3px); } 100% { opacity: 1; filter: none; } }
 .title-screen .sub { font-style: italic; font-size: clamp(18px, 2.4vw, 26px); color: var(--limestone); opacity: 0; animation: carve 1.4s 2.2s ease forwards; margin: 0; }
 .title-screen .row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; align-items: center; opacity: 0; animation: carve 1s 3s ease forwards; }
-.title-screen.diving { opacity: 0; transition: opacity 1s ease; }
 
-/* chapter rail */
-.rail { position: fixed; left: 14px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; }
-.rail button { position: relative; width: 38px; height: 34px; background: none; border: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; color: var(--limestone); text-align: left; padding: 0 0 0 6px; border-left: 2px solid rgba(232, 225, 210, 0.35); }
-.rail button.cur { color: var(--ochre); border-color: var(--ochre); }
-.rail button:disabled { color: var(--dim); opacity: 0.45; cursor: not-allowed; }
-.rail button .tip { position: absolute; left: 44px; top: 50%; transform: translateY(-50%); white-space: nowrap; background: rgba(10, 18, 28, 0.9); padding: 4px 10px; font-size: 11px; text-transform: uppercase; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
-.rail button:hover .tip, .rail button:focus-visible .tip { opacity: 1; }
 
 /* captions */
 .captions { position: fixed; left: 72px; bottom: 34px; max-width: min(60ch, calc(100vw - 480px)); padding: 28px 28px 0 0; background: linear-gradient(90deg, rgba(10, 18, 28, 0.78), rgba(10, 18, 28, 0)); pointer-events: none; }
@@ -60,7 +49,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .continue { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); }
 .continue.entry { top: auto; bottom: 34px; right: 480px; transform: none; }
-.hint { position: fixed; left: 50%; transform: translateX(-50%); top: 18px; color: var(--dim); pointer-events: none; }
 
 /* top-right controls */
 .top-right { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; }
@@ -110,8 +98,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .modal { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 16px; text-align: center; background: rgba(10, 18, 28, 0.7); backdrop-filter: blur(3px); padding: 16px; }
 .modal h3 { font-family: var(--serif-display); font-weight: 400; letter-spacing: 0.08em; font-size: clamp(26px, 4vw, 44px); margin: 0; }
 .modal p { margin: 0; color: var(--dim); max-width: 46ch; }
-.assemble { position: fixed; left: 50%; transform: translateX(-50%); bottom: 130px; width: min(420px, calc(100vw - 32px)); display: grid; gap: 8px; text-align: center; }
-.assemble input { width: 100%; accent-color: var(--ochre); }
 .stick { position: fixed; left: 24px; bottom: 90px; width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(232, 225, 210, 0.35); touch-action: none; }
 .stick i { position: absolute; left: 40px; top: 40px; width: 40px; height: 40px; border-radius: 50%; background: rgba(224, 167, 62, 0.5); }
 .lookzone { position: fixed; right: 0; top: 0; width: 55%; height: 70%; touch-action: none; }
@@ -146,7 +132,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .fallback .e .c { color: var(--red-ink); font-weight: 700; display: block; }
 
 @media (max-width: 760px) {
-  .rail { left: 4px; } .rail button { width: 28px; height: 28px; font-size: 11px; }
   .captions { left: 40px; right: 8px; max-width: none; bottom: 90px; }
   .ledger { left: 0; right: 0; bottom: 0; width: 100%; max-height: 62vh; border-radius: 12px 12px 0 0; }
   .book { right: 10px; bottom: 10px; width: 52px; height: 68px; }

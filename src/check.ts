@@ -1,32 +1,37 @@
-// Run with `npm run check`. Fails loudly if maze generation or the flight model break.
-import { buildMaze, idx, inChamber, N, ENTRANCE } from './experience/games/labyrinth/mazeGen';
+// Run with `npm run check`. Fails loudly if the store flow, the copy or the flight model break.
+import { CHAPTERS } from './content/copy';
 import { newFlight, step } from './experience/games/flight/physics';
+import { live, ORDER, useStore } from './store';
 
 const assert = (c: boolean, m: string) => { if (!c) throw new Error('FAIL: ' + m); };
 
-for (const seed of [1, 7, 42, 1234567, 99999999]) {
-  const m = buildMaze(seed);
-  let passages = 0;
-  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
-    if (x < N - 1 && m.open[idx(x, y)] & 2 && !(inChamber(x, y) && inChamber(x + 1, y))) passages++;
-    if (y < N - 1 && m.open[idx(x, y)] & 4 && !(inChamber(x, y) && inChamber(x, y + 1))) passages++;
-  }
-  assert(passages === 225 - 9, `seed ${seed}: perfect maze over 217 regions needs 216 passages, got ${passages}`);
-  const seen = new Set<number>([idx(...ENTRANCE)]); const q = [idx(...ENTRANCE)];
-  for (let h = 0; h < q.length; h++) {
-    const c = q[h], x = c % N, y = (c / N) | 0;
-    for (const [dx, dy, b] of [[0, -1, 1], [1, 0, 2], [0, 1, 4], [-1, 0, 8]]) {
-      const nx = x + dx, ny = y + dy;
-      if (m.open[c] & b && nx >= 0 && ny >= 0 && nx < N && ny < N && !seen.has(idx(nx, ny))) { seen.add(idx(nx, ny)); q.push(idx(nx, ny)); }
-    }
-  }
-  assert(seen.size === 225, `seed ${seed}: every cell reachable, got ${seen.size}`);
-  const s = m.solution;
-  assert(s[0][0] === 7 && s[0][1] === 14 && inChamber(...s[s.length - 1]), `seed ${seed}: solution runs door to chamber`);
-}
+// copy
+assert(CHAPTERS.length === 6 && CHAPTERS.every((c, i) => c.key === ORDER[i]), 'six chapters in ORDER');
+for (const c of CHAPTERS) c.captions.forEach((cap, i) => assert(cap.t.length > 0 || (c.key === 'partridge' && i === 0), `${c.key} caption ${i} non-empty`));
 
+// store run
+const st = () => useStore.getState();
+st().begin();
+assert(st().mode === 'walk', 'begin() enters walk');
+for (const k of ORDER) {
+  if (k === 'partridge') break;
+  const cp = CHAPTERS.find((c) => c.key === k)!;
+  st().enter(k);
+  assert(st().current === k && st().step === 0, `enter(${k}) sets current`);
+  for (let i = 0; i < cp.captions.length; i++) st().advance();
+  if (k === 'wings') { assert(st().mode === 'flight', 'wings ends in flight'); break; }
+  assert(st().written.includes(cp.id) && st().doors.includes(k) && st().current === null, `${k} writes its line and opens its door`);
+}
+st().endFlight({ outcome: 'win', maxAltitude: 0.5, glory: 0 });
+assert(st().written.includes('V') && st().current === 'partridge' && st().mode === 'walk' && st().step === 0, 'endFlight writes V and lands on the beach');
+const w = st().written.length;
+st().enter('saw');
+assert(st().current === 'partridge' && st().written.length === w, 'enter(saw) after it is written is a no-op');
+live.reset();
+
+// flight model
 const run = (flap: (f: ReturnType<typeof newFlight>) => boolean) => { const f = newFlight(); while (!f.outcome) step(f, flap(f), 1 / 60); return f; };
 assert(run(() => false).outcome === 'sea', 'gliding forever ends in the sea');
 assert(run(() => true).outcome === 'melt', 'climbing forever melts the wax');
 assert(run((f) => f.alt < 0.5).outcome === 'win', 'holding the middle course reaches Sicily');
-console.log('ok: maze and flight checks passed');
+console.log('ok: store, copy and flight checks passed');
