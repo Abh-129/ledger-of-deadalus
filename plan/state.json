@@ -1,7 +1,7 @@
 {
  "mode": "product",
  "name": "daedalus-cams45",
- "stage": "audit",
+ "stage": "gate3",
  "deadline": null,
  "approvals": {
   "gate1": {

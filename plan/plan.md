@@ -22,15 +22,15 @@ One hand-laid, first-person, walkable Labyrinth in which six fresco chambers tel
 - Nothing is mocked. All geometry and fresco paintings are procedural; all sound is the existing Web Audio synth.
 
 ## Global Constraints
-- Design direction: TBD at Gate 2. Every colour, light intensity, fog and fresco palette value lives in the `LOOK` object in src/experience/shared/look.tsx and in src/styles/tokens.css. Chamber files never hardcode colours or light values; they reference `LOOK.*` and `COL.*`. Applying the chosen direction (T5) changes values only.
+- Design direction: C, Moonlit Lapis (approved by Abhinav at Gate 2, Sun Nov 1 2026; reference design/directions.html section C). A cold blue moonlit world: night #0A121C, deep sea #10283A (walls, near fog), lapis #2457A0 (fresco sea, meander bands, shaft tint), moonlight #C9D6E8 (key light), limestone #E8E1D2 (fresco ground, captions), olive #6F7A4E, fresco black #15110E. Ochre #E0A73E (the thread, Solved) and red (#B3372B token; #D4584A lifted for Cost light and red text on dark, #A32A1E red ink on pale paper) are the only warm things anywhere. Plus direction A's plaster texture on fresco walls and direction B's black outlines and meander bands. Brightness floor: it must never look murky on a dim laptop (see T5). Every colour, light intensity, fog and fresco palette value lives in the `LOOK` object in src/experience/shared/look.tsx and in src/styles/tokens.css. Chamber files never hardcode colours or light values; they reference `LOOK.*` and `COL.*`. Applying the chosen direction (T5) changes values only.
 - Colour meaning: ochre (`--ochre`, `COL.ochre`, `LOOK.craft`) = what was solved; red (`--minoan-red`, `COL.red`, `LOOK.cost`) = what it cost. Never used for anything else, in UI, light or fresco paint. Fresco backgrounds, skin, sea and borders use `LOOK.fresco.*` earth tones that are visibly distinct from the two tokens.
-- Light meaning: warm light only on craft (Daedalus's inventions, the thread). Red light only from the moment a cost lands. Everything else is cool stone light from `LOOK.stone`.
+- Light meaning (direction C): every light is cool moonlight (`LOOK.moon`) except two. Ochre appears only as emissive glow on the thread and on an invention at the step it works (the saw's teeth, the compass circle, the sealed wax), never as a light colour; red light (`LOOK.cost`) only from the moment a cost lands. No warm lamps, torches or flames.
 - Myth text: only what is in src/content/copy.ts. No new myth facts, names, numbers or quotes. No words painted inside frescoes. Theseus kills the Minotaur offscreen; no gore; the Minotaur is never shown in full (shadow and fresco silhouette only).
 - Anti overengineering: no new dependencies; no abstraction with a single user; no config systems, plugin registries, event buses or generic state machines; no files beyond those listed per task; delete what v2 no longer uses (list under T1 and T19); prefer the smallest diff; target under 250 lines per chamber file.
 - Lane discipline: a task may create or edit only the files in its `files:` line. Lanes A to F never edit Lane 0 files or each other's. If a lane needs a contract change, it stops and posts `@lane-0` on plan/board.md; the main session decides in plan/rulings.md.
 - Chambers are authored in local coordinates: origin at the room centre on the floor, -Z points from the entry door toward the exit door, +Y up, metres. The World places and rotates them.
 - Every interaction has a skip: the Continue button (and Enter) is always visible while a chamber is current, and does exactly what the hero hotspot does. Chamber visuals for step n must look complete even if the player only pressed Continue.
-- Lighting recipe for every chamber [research 1, 2, 5, 6]: hemisphere fill (LOOK.stone) + exactly one warm flickering point light on the craft object (LOOK.craft) + `<fogExp2>` matched to the background colour (LOOK.stone.fog, LOOK.stone.fogDensity); fake ambient occlusion by darkening wall vertex colours near floor and corners (World, T2); no real-time shadows, no shadow maps, no reflections. drei `<SpotLight volumetric>` only in V (daylight shaft) and III (red shaft), depthBuffer off unless the cone visibly clips. drei `<Sparkles>` dust only inside those shafts and over the Saw bench.
+- Lighting recipe for every chamber [research 1, 2, 5, 6]: hemisphere fill (LOOK.stone, deep sea) + exactly one cool moonlight key on the hero object (a pointLight or spotLight in LOOK.moon, steady, no flicker) + `<fogExp2>` matched to the background colour (LOOK.stone.fog, LOOK.stone.fogDensity); fake ambient occlusion by darkening wall vertex colours near floor and corners (World, T2); no real-time shadows, no shadow maps, no reflections (direction C's notes suggest one moon shadow map; not adopted, for fps and Safari). drei `<SpotLight volumetric>` only in V (white daylight shaft: the first sun of the run, and the danger) and III (red shaft), depthBuffer off unless the cone visibly clips. drei `<Sparkles>` dust only inside those shafts and over the Saw bench.
 - Post stack [research 3]: N8AO at half resolution (`halfRes`) + light Bloom + Vignette (Noise kept as in v1, off with reduced motion); `dpr={[1, 1.5]}` at High, 1 at Low; drei PerformanceMonitor switches to Low on decline, exactly as v1 does (one stage, no extra state). N8AO is Emerging; it is the first thing cut if the look test fps check fails.
 - Materials: walls, floors and ceilings use meshStandardMaterial (roughness about 0.9, vertexColors for the fake AO); hero objects and figures keep the v1 toon Prim with black outline, which echoes the fresco contour [research j]. The Canvas stays `flat`; T7 checks that ochre and red still read as the tokens with Bloom on.
 - Performance: 60 fps target at High on a laptop; at most about 250 draw calls in any chamber view; fresco canvases at most 2048 px on the long side (1024 at Low).
@@ -149,15 +149,16 @@ export const CHAMBERS: Record<ChapterKey, (p: ChamberProps) => JSX.Element>;
 
 // src/experience/shared/look.tsx additions (values are placeholders until T5)
 export const LOOK: {
-  stone: { wall: string; floor: string; ceiling: string; ambient: number; hemiSky: string; hemiGround: string; fog: string; fogDensity: number };
-  craft: { color: string; intensity: number; distance: number };   // warm, craft only
+  stone: { wall: string; floor: string; ceiling: string; ambient: number; hemiSky: string; hemiGround: string; fog: string; fogDensity: number; minAmbient: number }; // minAmbient = brightness floor, set in T5
+  moon: { color: string; intensity: number; distance: number };    // cool key light, one per chamber (#C9D6E8)
+  craft: { color: string; emissive: number };                      // ochre emissive only (thread, inventions as they work); never a light colour
   cost: { color: string; intensity: number; distance: number };    // red, cost only
   sky: { day: [string, string, string]; dawn: [string, string, string] }; // SkyDome top, mid, bottom
   fresco: { plaster: string; line: string; blue: string; earth: string; skin: string; skinPale: string; green: string; sea: string; pxPerM: number };
 };
 ```
 
-Existing kit the lanes reuse as is: `Prim`, `COL`, `GLOW`, `RED_GLOW`, `SkyDome` (look.tsx), `Person`, `Partridge`, `Bull` (figures.tsx), `Polyline` (lines.tsx), `Sea` (sea.tsx), `sfx.*` and `ambient()` (sounds.ts), `smooth()` and `useStepT()` (rig.ts). The only sounds that exist are sfx.pluck, bellow, cry, slam, impact, wind, fall, gate, splash and the beds wind, workshop, drip, sea, dawn; src/audio/sounds.ts is owned by no lane and is not edited, so a chamber uses only these. Lanes may read v1 scenes for geometry ideas with `git show v1-backup:src/experience/scenes/SawScene.tsx` (and so on); they never restore those files.
+Existing kit the lanes reuse as is: `Prim`, `COL`, `GLOW`, `RED_GLOW`, `SkyDome` (look.tsx), `Person`, `Partridge`, `Bull` (figures.tsx), `Polyline` (lines.tsx), `Sea` (sea.tsx), `sfx.*` and `ambient()` (sounds.ts), `smooth()` and `useStepT()` (rig.ts). The only sounds that exist are sfx.pluck, bellow, cry, slam, impact, wind, fall, gate, splash, breath(level), swell(on), quiet() and the beds wind, workshop, drip, sea, dawn; src/audio/sounds.ts is owned by no lane and is not edited, so a chamber uses only these. Lanes may read v1 scenes for geometry ideas with `git show v1-backup:src/experience/scenes/SawScene.tsx` (and so on); they never restore those files.
 
 ## Claims we will make
 Writer and judge read this list. Only built claims are said in the present tense.
@@ -191,7 +192,7 @@ Writer and judge read this list. Only built claims are said in the present tense
 | F Partridge | T17, T18 | src/chambers/PartridgeChamber.tsx, plan/shots/partridge-*.png | parallel |
 | Z Integration | T19, T20 | any file, small fixes only, each named in its report; CREDITS.md, README.md | last |
 
-Gates: Gate 2 = Abhinav picks a design direction (feeds T5). Gate 3 = look test: Abhinav approves the Saw chamber screenshots and fps numbers (post on and off) from T7 before the second task of lanes B to F (T9, T12, T14, T16, T18) starts. The first task of each lane may run during Gate 3.
+Gates: Gate 2 = passed: direction C, Moonlit Lapis (feeds T5). Gate 3 = look test: Abhinav approves the Saw chamber screenshots and fps numbers (post on and off) from T7 before the second task of lanes B to F (T9, T12, T14, T16, T18) starts. The first task of each lane may run during Gate 3.
 
 Named browser checks (run with `npm run dev`; a lane saves screenshots to its own plan/shots/ names; console must show zero errors and zero warnings from our code):
 - B-CHAMBER(<key>): open `?at=<key>`, walk in, complete the chamber once with hotspots only and once (reload) with Continue only; both end with the ledger line written and the exit door open; screenshot each step.
@@ -257,16 +258,18 @@ steps:
 done when: `npm run build` passes; plan/shots/fresco-sample.png shows plaster, border and three figures in different poses legibly at 1280x720.
 approved installs: none
 
-### T5: Apply the chosen design direction (Lane 0)
-depends_on: [T3, T4, Gate 2]
-files: src/experience/shared/look.tsx (LOOK and COL values only), src/styles/tokens.css, src/styles/global.css (overlay type and colour only), src/world/Fresco.tsx (plaster and border parameters only), src/world/World.tsx (Meander frieze only)
-interfaces: consumes the direction master-designer delivered and Abhinav picked; produces final token values
-failing test first: none; check is the before and after screenshots.
+### T5: Apply direction C, Moonlit Lapis (Lane 0)
+depends_on: [T3, T4] (Gate 2 passed: C approved)
+files: src/experience/shared/look.tsx (LOOK and COL values only), src/styles/tokens.css, src/styles/global.css (overlay type and colour only), src/world/Fresco.tsx (plaster and border parameters only), src/world/World.tsx (Meander frieze and light values only)
+interfaces: consumes design/directions.html section C (read its palette and Materials, Lighting, Post notes first); produces final token values
+failing test first: the brightness floor check in step 4 fails on the v1 placeholder values or is unmeasured.
 steps:
-1. Map the direction's palette, light temperatures, fog, fonts already in the stack and overlay styling onto LOOK and tokens. Ochre and red keep their meanings; if the direction shifts their hue, both CSS and COL change together.
-2. Meander frieze: one shared Fresco band (border 'meander', paint a no-op, 0.5 m tall) at about 2 m height along both walls of the Meander passage and the short corridors, one texture reused by every band, so no stretch of the walk is bare box stone.
-3. Screenshot `?at=saw`, `?at=labyrinth` and the Meander passage before and after to plan/shots/t5-*.png.
-done when: build passes; screenshots posted on the board for Gate 3 context; no chamber file changed.
+1. Values. LOOK.stone: wall and floor deep sea #10283A lifted toward moonlight so plaster reads, ceiling night #0A121C, hemiSky #C9D6E8, hemiGround #10283A, fog #10283A; LOOK.moon #C9D6E8; LOOK.cost #D4584A for light; LOOK.craft #E0A73E emissive; LOOK.fresco: plaster #E8E1D2, line #15110E, blue #2457A0, green #6F7A4E, sea #10283A, earth and skin from direction C's fresco notes (limestone, lapis, olive and black dominate; skin tones may be the only other earth colours, kept visibly unlike ochre and red). tokens.css: add --red-glow #D4584A, --ochre-ink #8A5A06, --red-ink #A32A1E (use the lifted red for Cost text on dark surfaces, red ink only on pale paper); overlay surfaces from --bg #0A121C, --surface #0E1823, --line #213141, --text #E8E1D2, --muted #8A97A6. Ledger page as direction C's moonlit vellum (cool page, warm inks). Fonts unchanged.
+2. Fresco.tsx: plaster from direction A (low-frequency blotches plus a 512 px noise, slight edge loss) on limestone ground; black contour 3 to 4 px from B; border 'meander' in lapis on limestone as B's meander bands. Fresco walls are lit by LOOK.moon only.
+3. Meander frieze: one shared Fresco band (border 'meander', paint a no-op, 0.5 m tall) at about 2 m height along both walls of the Meander passage and the short corridors, one texture reused by every band, so no stretch of the walk is bare box stone.
+4. Brightness floor (not murky on a dim laptop): set LOOK.stone.minAmbient (hemisphere plus ambient) and fogDensity so that, at High and at Low, (a) a wall 3 m from the camera samples no darker than #1A2735 in the screenshot, (b) the far wall of the largest room (II, 11 m) is still distinguishable from fog, (c) a fresco 4 m away shows its figures and border legibly. Check by sampling five pixels per screenshot (canvas readPixels or the screenshot file) and record the values on the board. No chamber light may be tuned below this floor; red cost light adds to it, never replaces it.
+5. Screenshot `?at=saw`, `?at=labyrinth`, `?at=wings` and the Meander passage before and after to plan/shots/t5-*.png.
+done when: build passes; brightness floor values recorded; screenshots posted on the board for Gate 3 context; no chamber file changed.
 approved installs: none
 
 ### T6: Chamber I Saw, build (Lane A, look test part 1)
@@ -275,7 +278,7 @@ files: src/chambers/SawChamber.tsx, plan/shots/saw-*.png
 interfaces: consumes ChamberProps, Hotspot, Fresco, figure, LOOK, Prim, Partridge, sfx
 failing test first: B-CHAMBER(saw) fails on the stub (no hero, no hotspots).
 steps:
-1. Room dressing: Athens workshop. Workbench with tools at the room centre, one hanging lamp over it (the only warm light, LOOK.craft), cool stone elsewhere.
+1. Room dressing: Athens workshop. Workbench with tools at the room centre, moonlight falling on it from a high window (the chamber's one LOOK.moon key), cool stone elsewhere; no lamp.
 2. Hero object by step. 0: a fish spine lies on the bench (hotspot). 1: the spine's ribs become iron teeth, a saw (morph over 1.2 s, sfx.pluck). 2: two iron arms join and sweep a glowing ochre circle on the bench. 3: the lamp drops to a glow; red light (LOOK.cost) rises from the citadel fresco; sfx.slam. 4: a Partridge runs low across the floor toward the exit and stays on the ground.
 3. Hotspots: one per step 0 to 3 on the bench, step 4 on the partridge; each `enabled={state==='current' && step===n}`, onUse = advance.
 done when: build passes; B-CHAMBER(saw) passes both ways; screenshots saw-0.png to saw-4.png.
@@ -289,7 +292,7 @@ steps:
 1. Left wall fresco "the pupil": Daedalus and a smaller boy at a bench, the boy holding a fish spine (the spine in ochre once step >= 1).
 2. Right wall fresco "the citadel": the rock of Athena's citadel with a temple; at step >= 3 a small falling figure painted in red appears beside it (version = step).
 3. Exit wall fresco, above the door: a partridge low over a grass band, revealed at step 4.
-4. Tune light falloff so the frescoes read at 1280x720 and the bench lamp (the one flickering warm point light) is the brightest thing until step 3; Sparkles dust over the bench.
+4. Tune light falloff so the frescoes read at 1280x720 and the moonlit bench is the brightest area, with the ochre saw and compass glow the only warm things, until step 3; Sparkles dust in the moon shaft over the bench; nothing below the T5 brightness floor.
 5. Look-test fps check [research]: in Chrome at High, record median fps in the Saw chamber with post on and with post off (Settings quality Low), on the target laptop.
 6. Token check: with Bloom on, the compass circle (ochre) and the cost light (red) still read as the two tokens next to the overlay's Ledger ochre and red; if Bloom shifts them visibly, lower Bloom intensity (Experience.tsx is Lane 0: post `@lane-0` with the value instead of editing it).
 done when: build passes; saw-hero.png (the moment of step 2, compass circle and the pupil fresco in frame) and saw-cost.png (step 3) at 1280x720; both fps numbers posted on the board with `@main Gate 3 look test ready`. If post-on fps is under 55, Gate 3 also decides whether N8AO stays.
@@ -300,8 +303,8 @@ depends_on: [T2, T3, T4]
 files: src/chambers/CowChamber.tsx, plan/shots/cow-*.png
 failing test first: B-CHAMBER(cow) fails on the stub.
 steps:
-1. Room: Cretan palace workshop, tall, a raised platform at the far end. Warm light only on the cow's build area.
-2. Hero by step. 0: a Bull (figures.tsx, LOOK.fresco palette pale) stands in a side pen, lit cool. 1: pale robed figure at the bench (Person). 2: the hollow wooden cow assembles on wheels in four parts, FRAME, PANELS, WHEELS, HIDE (UI.parts as the four hotspot labels; local sub-step state; any step > 2 forces fully built). 3: the cow rolls on its wheels behind a curtain or into an alcove, warm light at its peak, then the alcove dims. 4: red light from the exit wall; sfx.bellow.
+1. Room: Cretan palace workshop, tall, a raised platform at the far end. The moon key on the cow's build area; each finished part edges in ochre emissive as it is fitted.
+2. Hero by step. 0: a Bull (figures.tsx, LOOK.fresco palette pale) stands in a side pen, lit cool. 1: pale robed figure at the bench (Person). 2: the hollow wooden cow assembles on wheels in four parts, FRAME, PANELS, WHEELS, HIDE (UI.parts as the four hotspot labels; local sub-step state; any step > 2 forces fully built). 3: the cow rolls on its wheels behind a curtain or into an alcove, its ochre edges at their peak, then the alcove dims. 4: red light from the exit wall; sfx.bellow.
 3. Step 2's caption advances only after the fourth part, or on Continue.
 done when: build passes; B-CHAMBER(cow) both ways; cow-0..4.png.
 approved installs: none
@@ -313,7 +316,7 @@ steps:
 1. Long wall fresco: a white bull rising from a blue sea band, a crowned figure (Minos) leading it away from an altar (steps 0 onward).
 2. Opposite wall: the queen in profile (step >= 1).
 3. Exit wall: at step 4, a horned silhouette in red, the Minotaur as fresco only.
-done when: build passes; cow-hero.png (the cow assembled under warm light with the bull fresco in frame); Gate 3 look matched.
+done when: build passes; cow-hero.png (the cow assembled in moonlight, ochre edged, with the bull fresco in frame); Gate 3 look matched.
 approved installs: none
 
 ### T10: Chamber III Minotaur's chamber, build (Lane C)
@@ -321,7 +324,7 @@ depends_on: [T2, T3, T4]
 files: src/chambers/MinotaurChamber.tsx, plan/shots/labyrinth-*.png
 failing test first: B-CHAMBER(labyrinth) fails on the stub.
 steps:
-1. Room: tall, empty, no warm light at all (the one chamber without the warm point light). Red light (LOOK.cost) only: one drei SpotLight volumetric red shaft from high on one side, plus the hemisphere fill. Bones, blood and the monster itself are never shown.
+1. Room: tall, empty, no ochre anywhere until step 3 and no moon key (the one chamber without it). Red light (LOOK.cost) only, above the T5 brightness floor: one drei SpotLight volumetric red shaft from high on one side, plus the hemisphere fill. Bones, blood and the monster itself are never shown.
 2. A horned shadow (a flat dark silhouette quad) slides slowly across the far wall at steps 0 to 2, with one low sfx.bellow when it first appears (no new sounds; sounds.ts is not edited); it is gone at step 3.
 3. Hero: a stone plinth with fourteen small clay figures, seven and seven. 2: on use they light red one by one over 2 s. 3: a ball of thread lies at the chamber centre in ochre (Theseus has come); the shadow stops.
 done when: build passes; B-CHAMBER(labyrinth) both ways; labyrinth-0..3.png.
@@ -354,7 +357,7 @@ depends_on: [T2, T3, T4]
 files: src/chambers/ThreadChamber.tsx, plan/shots/thread-*.png
 failing test first: B-CHAMBER(thread) fails on the stub.
 steps:
-1. Room: small and quiet, a stool with a ball of thread under a soft warm light (the thread is craft).
+1. Room: small and quiet, a stool with a ball of thread in a soft moon key; the ball glows ochre (the thread is the one warm thing).
 2. By step. 0: ball on the stool (hotspot). 1: the ball unwinds toward the entry door and the thread end ties to the door post. 2: "That was your path": World's Thread brightens (T2 handles it); the chamber adds nothing on top, one moment is enough. 3: cool light turns red. 4: the entry door slams with sfx.slam (a chamber-local panel drops over the entry; it does not touch World doors); the exit to the tower opens on complete.
 done when: build passes; B-CHAMBER(thread) both ways; thread-0..4.png.
 approved installs: none
@@ -374,7 +377,7 @@ depends_on: [T2, T3, T4, T11]
 files: src/chambers/WingsChamber.tsx, plan/shots/wings-*.png
 failing test first: B-CHAMBER(wings) fails on the stub (it must end in mode flight, not an open door).
 steps:
-1. Tower room, 14 m tall, open to a SkyDome day sky (LOOK.sky.day); one drei SpotLight volumetric daylight shaft from above with Sparkles dust inside it; warm light only on the wax and the wings.
+1. Tower room, 14 m tall, open to a SkyDome day sky (LOOK.sky.day); one drei SpotLight volumetric white daylight shaft from above with Sparkles dust inside it (the first daylight in the run, cool white, never ochre); ochre only as emissive on the sealed wax.
 2. Hero by step. 0: a long table under the open roof, a few gulls high above. 1: feathers lay out on the table shortest to longest (staggered animation), tied and sealed; the wax glows ochre. 2: a small Person (Icarus) at the table end presses a thumb into the wax; the glow dips at that spot. 3: three horizontal light bands in the tower shaft: cool blue spray low, white heat high, ochre middle. 4: hotspot labelled UI.takeOff; its use calls advance, which sets mode flight.
 done when: build passes; B-CHAMBER(wings) both ways ends in the flight; wings-0..4.png.
 approved installs: none
@@ -395,7 +398,7 @@ files: src/chambers/PartridgeChamber.tsx, plan/shots/partridge-*.png
 failing test first: B-CHAMBER(partridge) fails on the stub (it must end in mode balance).
 steps:
 1. Outdoor beach at dawn: Sea (sea.tsx), SkyDome dawn (LOOK.sky.dawn), sand, a ditch with grass, no walls.
-2. By step. 0: feathers float on the waves (the opening line comes from Captions using flight.outcome). 1: a grave mound with a hotspot; on use, stones settle on it. 2: Daedalus's tools (a saw and a compass on the sand, Prim) lose their warm glow. 3: in the ditch, a Partridge beats its wings (wing flutter, it never rises). 4: the partridge stays low as the light comes up.
+2. By step. 0: feathers float on the waves (the opening line comes from Captions using flight.outcome). 1: a grave mound with a hotspot; on use, stones settle on it. 2: Daedalus's tools (a saw and a compass on the sand, Prim) lose their ochre glow. 3: in the ditch, a Partridge beats its wings (wing flutter, it never rises). 4: the partridge stays low as the light comes up.
 done when: build passes; B-CHAMBER(partridge) both ways ends in Final Balance; partridge-0..4.png.
 approved installs: none
 

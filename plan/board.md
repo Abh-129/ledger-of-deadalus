@@ -8,3 +8,4 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [18:14] master-designer G3: 3 directions https://claude.ai/artifact/QQUqjCUr3iqUu6VZFCCRDP (rec C Moonlit Lapis + A plaster + B outlines). main: conductor check PASS on C frame render; minor: a frame caption overlaps section A header at narrow widths, fix in refine round
 - [18:16] master-planner G1: PRD/plan/progress, 20 tasks Lanes 0/A-F/Z | main: conductor check PASS (structure, no dashes); senior review launched; Gate 1+2 to Abhinav
 - [18:17] main: GATE 1+2 passed ("Yes, approve C"). Direction C. R1 dashes, R2 plaster, due date still open.
+- [18:21] main: conductor check G5: REFUTED reviewer claim 'sfx.breath does not exist' (sounds.ts:80 has breath, swell, quiet); plan.md sound list corrected. Rest PASS. Awaiting GATE 3.
