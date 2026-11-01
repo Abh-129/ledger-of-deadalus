@@ -1,7 +1,7 @@
 {
  "mode": "product",
  "name": "daedalus-cams45",
- "stage": "gate3",
+ "stage": "build",
  "deadline": null,
  "approvals": {
   "gate1": {
@@ -12,7 +12,10 @@
    "at": "Sun Nov  1 18:17:44 EST 2026",
    "quote": "Yes, approve C"
   },
-  "gate3": null,
+  "gate3": {
+   "at": "Sun Nov  1 18:23:45 EST 2026",
+   "quote": "I give you permission to build."
+  },
   "storyboard": null,
   "submit": null
  },
