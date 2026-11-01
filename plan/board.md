@@ -20,3 +20,4 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [18:48] reviewer T2: FIX (M2 L1): door z-fight, beach bound leak, thread clamp. Sent to lane-0 builder.
 - [18:48] main RULING: keep corridor LAMPS and hall COLUMNS. ALL LANES: keep every light mounted for the whole chamber and animate intensity only (changing light count recompiles all materials and stalls a frame).
 - [18:49] main: T2 fix 446327e verified by main (3 fixes present, check green) -> T2 DONE. Starting T3.
+- [18:51] main: T4 fix 16e4fb6 verified (weather gone, Fresco.tsx only) -> T4 DONE. t4-fresco.png is stale (pre-fix). Waiting on T3, then T5.
