@@ -31,9 +31,10 @@ One hand-laid, first-person, walkable Labyrinth in which six fresco chambers tel
 - Chambers are authored in local coordinates: origin at the room centre on the floor, -Z points from the entry door toward the exit door, +Y up, metres. The World places and rotates them.
 - Every interaction has a skip: the Continue button (and Enter) is always visible while a chamber is current, and does exactly what the hero hotspot does. Chamber visuals for step n must look complete even if the player only pressed Continue.
 - Lighting recipe for every chamber [research 1, 2, 5, 6]: hemisphere fill (LOOK.stone) + exactly one warm flickering point light on the craft object (LOOK.craft) + `<fogExp2>` matched to the background colour (LOOK.stone.fog, LOOK.stone.fogDensity); fake ambient occlusion by darkening wall vertex colours near floor and corners (World, T2); no real-time shadows, no shadow maps, no reflections. drei `<SpotLight volumetric>` only in V (daylight shaft) and III (red shaft), depthBuffer off unless the cone visibly clips. drei `<Sparkles>` dust only inside those shafts and over the Saw bench.
-- Post stack [research 3]: N8AO at half resolution (`halfRes`) + light Bloom + Vignette (Noise kept as in v1, off with reduced motion); `dpr={[1, 1.5]}` at High, 1 at Low; drei PerformanceMonitor turns N8AO off first on decline, then switches to Low. N8AO is Emerging; it is the first thing cut if the look test fps check fails.
+- Post stack [research 3]: N8AO at half resolution (`halfRes`) + light Bloom + Vignette (Noise kept as in v1, off with reduced motion); `dpr={[1, 1.5]}` at High, 1 at Low; drei PerformanceMonitor switches to Low on decline, exactly as v1 does (one stage, no extra state). N8AO is Emerging; it is the first thing cut if the look test fps check fails.
+- Materials: walls, floors and ceilings use meshStandardMaterial (roughness about 0.9, vertexColors for the fake AO); hero objects and figures keep the v1 toon Prim with black outline, which echoes the fresco contour [research j]. The Canvas stays `flat`; T7 checks that ochre and red still read as the tokens with Bloom on.
 - Performance: 60 fps target at High on a laptop; at most about 250 draw calls in any chamber view; fresco canvases at most 2048 px on the long side (1024 at Low).
-- Run length: total thread length 90 to 140 m; walk speed 2.2 m/s (Shift 3.5); about 5 captions per chamber; 45 s flight. Expected run 6 to 8 minutes.
+- Run length: total thread length 70 to 120 m; walk speed 2.2 m/s (Shift 3.5); about 5 captions per chamber; 45 s flight. Expected run 6 to 8 minutes.
 - Copy rules for any new UI string: no em dashes or en dashes, no exclamation marks, sentence case.
 - Persistence: settings only (sound, quality, reducedMotion). A reload starts a fresh run.
 - Accessibility: every caption, source line, ledger line and prompt is DOM text; focus visible on buttons; reduced motion removes head bob and camera easing; sound starts muted.
@@ -124,7 +125,7 @@ export function Hotspot(p: {
   enabled?: boolean;              // default true; typically state==='current' && step===n
   label?: string;                 // default UI.use; must be a copy.ts string
   radius?: number;                // metres, default 2.4; focus also needs the target within 30 degrees of view centre
-}): JSX.Element;                   // renders an empty object3D (world position read each frame) plus a small ochre glint while enabled
+}): JSX.Element;                   // renders an empty object3D (world position read each frame) plus a small off-white glint (LOOK.fresco.plaster) while enabled; never ochre or red, which keep their meanings
 
 // src/world/Fresco.tsx
 export type Paint = (g: CanvasRenderingContext2D, w: number, h: number) => void; // draws inside the border, plaster already laid
@@ -140,10 +141,10 @@ export function figure(g: CanvasRenderingContext2D, o: {
   fill: string; small?: boolean;                 // small = a child
 }): void;                                         // flat Minoan profile figure
 
-// src/world/chambers.ts (registry, one lazy import per chamber)
+// src/world/chambers.ts (registry, plain static imports; no React.lazy, no Suspense pop in at doors)
 export interface ChamberProps { step: number; state: 'ahead' | 'current' | 'done' }
 // step: store.step while current; last caption index when done; -1 when ahead
-export const CHAMBERS: Record<ChapterKey, React.LazyExoticComponent<(p: ChamberProps) => JSX.Element>>;
+export const CHAMBERS: Record<ChapterKey, (p: ChamberProps) => JSX.Element>;
 // Each chamber file: `export default function SawChamber({ step, state }: ChamberProps) { ... }`
 
 // src/experience/shared/look.tsx additions (values are placeholders until T5)
@@ -156,7 +157,7 @@ export const LOOK: {
 };
 ```
 
-Existing kit the lanes reuse as is: `Prim`, `COL`, `GLOW`, `RED_GLOW`, `SkyDome` (look.tsx), `Person`, `Partridge`, `Bull` (figures.tsx), `Polyline` (lines.tsx), `Sea` (sea.tsx), `sfx.*` and `ambient()` (sounds.ts), `smooth()` and `useStepT()` (rig.ts). Lanes may read v1 scenes for geometry ideas with `git show v1-backup:src/experience/scenes/SawScene.tsx` (and so on); they never restore those files.
+Existing kit the lanes reuse as is: `Prim`, `COL`, `GLOW`, `RED_GLOW`, `SkyDome` (look.tsx), `Person`, `Partridge`, `Bull` (figures.tsx), `Polyline` (lines.tsx), `Sea` (sea.tsx), `sfx.*` and `ambient()` (sounds.ts), `smooth()` and `useStepT()` (rig.ts). The only sounds that exist are sfx.pluck, bellow, cry, slam, impact, wind, fall, gate, splash and the beds wind, workshop, drip, sea, dawn; src/audio/sounds.ts is owned by no lane and is not edited, so a chamber uses only these. Lanes may read v1 scenes for geometry ideas with `git show v1-backup:src/experience/scenes/SawScene.tsx` (and so on); they never restore those files.
 
 ## Claims we will make
 Writer and judge read this list. Only built claims are said in the present tense.
@@ -176,11 +177,12 @@ Writer and judge read this list. Only built claims are said in the present tense
 3. Pressing Space or Enter while a button has focus: one advance, not two (v1 guarded this; keep it).
 4. Pointer lock: the lock selector is only the canvas and the Begin button, never the whole document, so clicks on Continue, Skip, Follow the thread, Ledger and Settings always work; Esc unlocks and shows Click to resume with Continue still visible; Safari and iOS work with drag look and no lock.
 5. Low quality and reduced motion: no postprocessing, no head bob, auto walk still works, frame time stays under 16 ms on the tower.
+6. Myth on screen: every Ledger line appears in view when written (ledgerFresh), not only inside a closed drawer; Theseus killing the Minotaur is told only by line IV's Solved text, so it must be seen.
 
 ## Lanes and file ownership
 | Lane | Tasks | Owns (may create or edit) | Runs |
 |---|---|---|---|
-| 0 Foundation | T1, T2, T3, T4, T5 | src/store.ts, src/check.ts, src/content/copy.ts (UI keys only), src/App.tsx, src/experience/Experience.tsx, src/experience/shared/look.tsx, src/experience/shared/rig.ts, src/styles/tokens.css, src/styles/global.css, src/world/*, src/overlay/Overlay.tsx, src/overlay/Captions.tsx, src/overlay/Prompt.tsx, src/overlay/Settings.tsx, src/overlay/Ledger.tsx, src/overlay/FinalBalance.tsx, src/input.ts | first; T2 and T4 in parallel after T1; T5 after Gate 2 |
+| 0 Foundation | T1, T2, T3, T4, T5 | index.html (title only), src/store.ts, src/check.ts, src/content/copy.ts (UI keys only), src/App.tsx, src/experience/Experience.tsx, src/experience/shared/look.tsx, src/experience/shared/rig.ts, src/styles/tokens.css, src/styles/global.css, src/world/*, src/overlay/Overlay.tsx, src/overlay/Captions.tsx, src/overlay/Prompt.tsx, src/overlay/Settings.tsx, src/overlay/Ledger.tsx, src/overlay/FinalBalance.tsx, src/input.ts | first; T1 then T2; T3 and T4 in parallel after T2 (disjoint files); T5 after T3, T4 and Gate 2 |
 | A Saw | T6, T7 | src/chambers/SawChamber.tsx, plan/shots/saw-*.png | after T2 to T4; look test |
 | B Cow | T8, T9 | src/chambers/CowChamber.tsx, plan/shots/cow-*.png | parallel |
 | C Minotaur | T10, T12 | src/chambers/MinotaurChamber.tsx, plan/shots/labyrinth-*.png | parallel |
@@ -204,14 +206,14 @@ Each task is one builder session (30 to 90 minutes). Demo path first. 20 tasks.
 
 ### T1: Store, copy keys, v1 deletions, check.ts (Lane 0)
 depends_on: []
-files: src/store.ts, src/check.ts, src/content/copy.ts, src/App.tsx, src/experience/Experience.tsx, src/overlay/Overlay.tsx, src/overlay/Captions.tsx, src/overlay/Settings.tsx, src/overlay/Ledger.tsx, src/overlay/FinalBalance.tsx, src/overlay/Hud.tsx, src/experience/games/flight/Flight.tsx, src/experience/shared/rig.ts, src/styles/global.css; delete src/experience/scenes/ (all 7 files), src/experience/games/labyrinth/ (mazeGen.ts, MazeMesh.tsx), src/overlay/ChapterRail.tsx
+files: index.html, src/experience/shared/look.tsx, src/store.ts, src/check.ts, src/content/copy.ts, src/App.tsx, src/experience/Experience.tsx, src/overlay/Overlay.tsx, src/overlay/Captions.tsx, src/overlay/Settings.tsx, src/overlay/Ledger.tsx, src/overlay/FinalBalance.tsx, src/overlay/Hud.tsx, src/experience/games/flight/Flight.tsx, src/experience/shared/rig.ts, src/styles/global.css; delete src/experience/scenes/ (all 7 files), src/experience/games/labyrinth/ (mazeGen.ts, MazeMesh.tsx), src/overlay/ChapterRail.tsx
 interfaces: produces the store API, ORDER, Mode, FlightResult, live, the new UI keys and `?at=`
 failing test first: src/check.ts "store run": begin(); for each key in ORDER except wings and partridge, enter(k), call advance() captions.length times, assert written gains that Roman and doors includes k; enter('wings') and advance through, assert mode==='flight'; endFlight({outcome:'win',...}) assert written includes 'V' and current==='partridge'; enter('saw') again is a no-op. Also "copy": every CHAPTERS caption non-empty except partridge[0]; six chapters in ORDER. Flight asserts kept; maze asserts removed.
 steps:
 1. Rewrite store.ts to the Interfaces section (keep v1's load/save of settings, guarded for node: no top level `location`, `localStorage` or `matchMedia` access outside try or typeof checks).
-2. copy.ts: add the seven UI keys and set UI.title to 'THE LABYRINTH OF DAEDALUS'; delete only UI keys v2 no longer uses: UI.scrollHint, UI.back, GAME.labyrinthPrompt, GAME.labyrinthPromptTouch, GAME.threadLabel, GAME.threadUsed, SETTINGS_LABELS.unlockAll, SETTINGS_LABELS.showControls, SETTINGS_LABELS.assist. Keep every myth string (unused ones such as GAME.minotaurDead stay). Only if ruling R1 in progress.md says yes: replace the en dashes in the six `source` citation ranges with hyphens (as CREDITS.md already does) and the em dash empty-cell marker in Ledger.tsx with a middle dot.
-3. Delete the v1 files listed above and the maze parts of check.ts; strip useRig and Wp from rig.ts (keep smooth, useStepT); remove ChapterRail, Assemble, wheel scroll and scrollHint from Overlay; key the ambient BED map by `current` (and 'sea' for title, 'wind' for flight, 'dawn' for balance); remove unlockAll, assist, showControls from Settings; remove the labyrinth half of Hud.tsx (keep the flight HUD); Flight.tsx calls `endFlight` instead of setting flight and toEntry; FinalBalance "walk again" calls reset(); Experience.tsx renders nothing but a dark background in walk mode until T2 (temporary, one line); delete .rail CSS.
-4. Captions.tsx reads current and step; shows nothing when current is null; shows the source line for 4 s after complete.
+2. copy.ts: add the seven UI keys and set UI.title to 'THE LABYRINTH OF DAEDALUS'; index.html `<title>` becomes "The Labyrinth of Daedalus" (matches the write-up's title); add `LOOK` to look.tsx with placeholder values from v1 COL (stone cool and dim, craft = COL.ochre, cost = COL.red, fresco earth palette distinct from both tokens), so T2 and T4 both build against it; delete only UI keys v2 no longer uses: UI.scrollHint, UI.back, GAME.labyrinthPrompt, GAME.labyrinthPromptTouch, GAME.threadLabel, GAME.threadUsed, SETTINGS_LABELS.unlockAll, SETTINGS_LABELS.showControls, SETTINGS_LABELS.assist. Keep every myth string (unused ones such as GAME.minotaurDead stay). Only if ruling R1 in progress.md says yes: replace the en dashes in the six `source` citation ranges with hyphens (as CREDITS.md already does) and the em dash empty-cell marker in Ledger.tsx with a middle dot.
+3. Delete the v1 files listed above and the maze parts of check.ts; strip useRig and Wp from rig.ts (keep smooth, useStepT); remove ChapterRail, Assemble, wheel scroll and scrollHint from Overlay; key the ambient BED map by `current` (and 'sea' for title, 'wind' for flight, 'dawn' for balance; when current is null in walk mode, keep the last bed playing); remove unlockAll, assist, showControls from Settings; remove the labyrinth half of Hud.tsx (keep the flight HUD); Flight.tsx calls `endFlight` instead of setting flight and toEntry; FinalBalance "walk again" calls reset(); Experience.tsx renders nothing but a dark background in walk mode until T2 (temporary, one line); delete .rail CSS.
+4. Captions.tsx reads current and step; shows nothing when current is null; shows the source line for 4 s after complete; keeps v1's partridge rule (caption 0 is partridgeOpening.win or .fell from flight.outcome).
 done when: `npm run build && npm run check` pass; `grep -r "mazeGen\|LabyrinthScene\|ChapterRail\|toEntry" src` is empty; app loads to the title with zero console errors.
 approved installs: none
 
@@ -219,12 +221,12 @@ approved installs: none
 depends_on: [T1]
 files: src/world/layout.ts, src/world/World.tsx, src/world/Thread.tsx, src/world/chambers.ts, src/chambers/SawChamber.tsx, src/chambers/CowChamber.tsx, src/chambers/MinotaurChamber.tsx, src/chambers/ThreadChamber.tsx, src/chambers/WingsChamber.tsx, src/chambers/PartridgeChamber.tsx, src/experience/Experience.tsx, src/check.ts
 interfaces: produces layout.ts, ChamberProps, CHAMBERS, the six stub files (each stub: one Fresco-sized limestone plane plus `null` hero; handed to its lane after this task)
-failing test first: src/check.ts "layout": rooms are in ORDER; roomAt(center)===key for every room; THREAD[0] equals SPAWN.pos; THREAD passes within 0.5 m of each room centre saw..wings in order; no THREAD segment crosses a Box except door boxes; total THREAD length in [90, 140]; every non-partridge room has an exit inside a door Box; blocked(SPAWN.pos, 0.3, [])===false.
+failing test first: src/check.ts "layout": rooms are in ORDER; roomAt(center)===key for every room; THREAD[0] equals SPAWN.pos; THREAD passes within 0.5 m of each room centre saw..wings in order; no THREAD segment crosses a Box except door boxes; total THREAD length in [70, 120]; every non-partridge room has an exit inside a door Box; blocked(SPAWN.pos, 0.3, [])===false.
 steps:
-1. Hand-lay the plan: entrance hall (SPAWN) -> I saw 8x8 m, h 4.5 -> short corridor -> II cow 11x11, h 6 -> the Meander passage (four to six right-angle turns, 2.4 m wide, 30 to 40 m; this is "the Labyrinth" you walk) -> III labyrinth 10x10, h 8 -> IV thread 7x7, h 4 -> V wings 6x6 tower, h 14, open roof. VI partridge is a separate outdoor area 200 m east, radius 18 m. All axis aligned.
-2. World.tsx: one box mesh per BOXES entry sharing one stone material (merge only if B-PERF demands it) (stone colours from LOOK.stone), floor and ceilings, a door per room exit that lifts into the ceiling over 1.2 s when doors includes its key (red seam flash from LOOK.cost, sfx.gate), hemisphere plus ambient light from LOOK.stone, fog. Mount CHAMBERS for the current room index and its neighbours inside `<group position={[cx,0,cz]} rotation-y={yaw}>` with Suspense.
+1. Hand-lay the plan: entrance hall (SPAWN) -> I saw 8x8 m, h 4.5 -> short corridor -> II cow 11x11, h 6 -> the Meander passage (four right-angle turns, 2.4 m wide, 20 to 30 m; this is "the Labyrinth" you walk; short on purpose, because a long bare corridor is the generic maze v1 was rejected for) -> III labyrinth 10x10, h 8 -> IV thread 7x7, h 4 -> V wings 6x6 tower, h 14, open roof. VI partridge is a separate outdoor area 200 m east, radius 18 m. All axis aligned.
+2. World.tsx: one box mesh per BOXES entry sharing one stone material (merge only if B-PERF demands it) (stone colours from LOOK.stone), floor and ceilings, a door per room exit that lifts into the ceiling over 1.2 s when doors includes its key (red seam flash from LOOK.cost, sfx.gate), hemisphere plus ambient light from LOOK.stone, fog. Mount CHAMBERS for the current room index and its neighbours inside `<group position={[cx,0,cz]} rotation-y={yaw}>` (plain components, no Suspense).
 3. Thread.tsx: Polyline along THREAD at y 0.02, ochre (LOOK.craft) up to the furthest reached room, dim beyond; when current==='thread' and step>=2, the walked part brightens to GLOW for the rest of the run.
-4. Experience.tsx: walk and title modes render World; flight renders Flight; balance renders World. Post stack and dpr per Global Constraints (N8AO halfRes, Bloom, Vignette; PerformanceMonitor disables N8AO before switching to Low).
+4. Experience.tsx: walk and title modes render World; flight renders Flight; balance renders World. Post stack and dpr per Global Constraints (N8AO halfRes, Bloom, Vignette; PerformanceMonitor switches to Low on decline, as in v1).
 done when: test command passes; `?at=cow` shows the walls, the stub planes and the thread with zero console errors (camera fixed at the room entry until T3).
 approved installs: none
 
@@ -235,19 +237,20 @@ interfaces: produces player, Hotspot, the focus field use, Prompt overlay
 failing test first: B-DOOR fails before this task (no movement). Add to check.ts: blocked() is true at a closed door centre and false once its key is in open.
 steps:
 1. player.ts: the plain state object. Player.tsx [research 7]: drei `<PointerLockControls selector="#begin, #stage canvas">` (never bare document) on fine pointers; on `pointerlockchange` to unlocked, show UI.resume in Prompt; on `pointerlockerror`, touch, or coarse pointer, use drag look instead (pointer events on the canvas; a press shorter than 6 px of movement is a click). WASD and arrows, Shift to run, pitch clamped to plus or minus 60 degrees, circle collision radius 0.3 against `blocked` with axis sliding, gentle head bob unless reducedMotion, calls enter(roomAt(pos)) on change.
-2. interact.tsx: Hotspot registers in a module-level Set; Player picks the nearest enabled one within radius and 30 degrees of view centre each frame, writes store.focus only when it changes; E, Enter or click (centre of screen while locked) calls onUse once. In drag-look mode, clicking a hotspot that is out of range walks you along the thread to it (click-to-walk), then focuses it.
+2. interact.tsx: Hotspot registers in a module-level Set; Player picks the nearest enabled one within radius and 30 degrees of view centre each frame, writes store.focus only when it changes; E, Enter or click (centre of screen while locked) calls onUse once. In drag-look mode a click (press under 6 px of movement) uses the focused hotspot; there is no click-to-walk (Follow the thread and Continue already cover getting there).
 3. Auto walk: F key or the Follow the thread button walks along THREAD from threadIndexNear to the current chamber's centre, or to its exit once its door is open; stops at a closed door or on any move key.
-4. Prompt.tsx: shows focus label and UI.useKey; UI.controls (UI.controlsTouch on coarse pointers) for the first 20 s of walking; the Follow the thread button; Continue button whenever current is set (Overlay's Continue moves here; Enter advances unless a button has focus).
+4. Title: in mode 'title' the camera sits at SPAWN, eye height, facing down the entrance hall so the lit floor thread runs into the dark toward chamber I (slow 0.1 rad yaw drift unless reducedMotion); the title overlay in Overlay.tsx shows UI.title, UI.subtitle and a Begin button with `id="begin"` (the pointer lock selector); Begin calls begin(). Screenshot to plan/shots/title.png.
+5. Prompt.tsx: shows focus label and UI.useKey; UI.controls (UI.controlsTouch on coarse pointers) for the first 20 s of walking; the Follow the thread button; Continue button whenever current is set (Overlay's Continue moves here; Enter advances unless a button has focus).
 done when: test command passes; B-DOOR passes on the stubs; walking all rooms by keyboard and by F works, both with pointer lock and with `?nolock` forcing drag look (one line in Player, kept for Safari testing); clicking Continue while locked works; zero console errors.
 approved installs: none
 
-### T4: Fresco kit and LOOK tokens (Lane 0)
-depends_on: [T1]
-files: src/world/Fresco.tsx, src/experience/shared/look.tsx, src/styles/tokens.css
-interfaces: produces Fresco, Paint, figure, LOOK
+### T4: Fresco kit (Lane 0)
+depends_on: [T2]
+files: src/world/Fresco.tsx, src/styles/tokens.css, src/chambers/SawChamber.tsx (temporary sample only, reverted before commit; Lane A has not started)
+interfaces: produces Fresco, Paint, figure (LOOK already exists from T1)
 failing test first: none in node (canvas needs a browser); the check is the screenshot in step 4.
 steps:
-1. LOOK in look.tsx with placeholder values from v1 COL (stone cool and dim, craft = COL.ochre, cost = COL.red, fresco earth palette distinct from both tokens).
+1. (LOOK was added in T1; adjust only LOOK.fresco values here if the sample needs it, via a one-line note to T5, not by editing look.tsx, which T3 does not touch either.)
 2. Fresco.tsx: canvas at size x LOOK.fresco.pxPerM (cap 2048, 1024 at Low); lays plaster (base colour, low-frequency blotches, a few hairline cracks, slight edge loss), paints the border band, calls paint inside, CanvasTexture with sRGB colour space and anisotropy 4, meshLambertMaterial; repaints only when version changes; disposes the texture on unmount.
 3. figure(): one flat profile figure in the Minoan manner (narrow waist, long hair, kilt or robe, arm poses for the six poses), about 40 lines.
 4. Verify by temporarily mounting one Fresco with three figure() calls in the saw stub, screenshot to plan/shots/fresco-sample.png, then revert the stub before committing (the stub belongs to Lane A).
@@ -255,13 +258,14 @@ done when: `npm run build` passes; plan/shots/fresco-sample.png shows plaster, b
 approved installs: none
 
 ### T5: Apply the chosen design direction (Lane 0)
-depends_on: [T4, Gate 2]
-files: src/experience/shared/look.tsx (LOOK and COL values only), src/styles/tokens.css, src/styles/global.css (overlay type and colour only), src/world/Fresco.tsx (plaster and border parameters only)
+depends_on: [T3, T4, Gate 2]
+files: src/experience/shared/look.tsx (LOOK and COL values only), src/styles/tokens.css, src/styles/global.css (overlay type and colour only), src/world/Fresco.tsx (plaster and border parameters only), src/world/World.tsx (Meander frieze only)
 interfaces: consumes the direction master-designer delivered and Abhinav picked; produces final token values
 failing test first: none; check is the before and after screenshots.
 steps:
 1. Map the direction's palette, light temperatures, fog, fonts already in the stack and overlay styling onto LOOK and tokens. Ochre and red keep their meanings; if the direction shifts their hue, both CSS and COL change together.
-2. Screenshot `?at=saw` and `?at=labyrinth` before and after to plan/shots/t5-*.png.
+2. Meander frieze: one shared Fresco band (border 'meander', paint a no-op, 0.5 m tall) at about 2 m height along both walls of the Meander passage and the short corridors, one texture reused by every band, so no stretch of the walk is bare box stone.
+3. Screenshot `?at=saw`, `?at=labyrinth` and the Meander passage before and after to plan/shots/t5-*.png.
 done when: build passes; screenshots posted on the board for Gate 3 context; no chamber file changed.
 approved installs: none
 
@@ -287,6 +291,7 @@ steps:
 3. Exit wall fresco, above the door: a partridge low over a grass band, revealed at step 4.
 4. Tune light falloff so the frescoes read at 1280x720 and the bench lamp (the one flickering warm point light) is the brightest thing until step 3; Sparkles dust over the bench.
 5. Look-test fps check [research]: in Chrome at High, record median fps in the Saw chamber with post on and with post off (Settings quality Low), on the target laptop.
+6. Token check: with Bloom on, the compass circle (ochre) and the cost light (red) still read as the two tokens next to the overlay's Ledger ochre and red; if Bloom shifts them visibly, lower Bloom intensity (Experience.tsx is Lane 0: post `@lane-0` with the value instead of editing it).
 done when: build passes; saw-hero.png (the moment of step 2, compass circle and the pupil fresco in frame) and saw-cost.png (step 3) at 1280x720; both fps numbers posted on the board with `@main Gate 3 look test ready`. If post-on fps is under 55, Gate 3 also decides whether N8AO stays.
 approved installs: none
 
@@ -317,7 +322,7 @@ files: src/chambers/MinotaurChamber.tsx, plan/shots/labyrinth-*.png
 failing test first: B-CHAMBER(labyrinth) fails on the stub.
 steps:
 1. Room: tall, empty, no warm light at all (the one chamber without the warm point light). Red light (LOOK.cost) only: one drei SpotLight volumetric red shaft from high on one side, plus the hemisphere fill. Bones, blood and the monster itself are never shown.
-2. A horned shadow (a flat dark silhouette quad) slides slowly across the far wall at steps 0 to 2 with sfx.breath rising; it is gone at step 3.
+2. A horned shadow (a flat dark silhouette quad) slides slowly across the far wall at steps 0 to 2, with one low sfx.bellow when it first appears (no new sounds; sounds.ts is not edited); it is gone at step 3.
 3. Hero: a stone plinth with fourteen small clay figures, seven and seven. 2: on use they light red one by one over 2 s. 3: a ball of thread lies at the chamber centre in ochre (Theseus has come); the shadow stops.
 done when: build passes; B-CHAMBER(labyrinth) both ways; labyrinth-0..3.png.
 approved installs: none
@@ -328,9 +333,9 @@ files: src/experience/games/flight/Flight.tsx, src/overlay/Hud.tsx
 interfaces: consumes live, endFlight, physics.ts (unchanged)
 failing test first: B-FLIGHT fails (T1 only made it compile).
 steps:
-1. Start from the tower: first second of the flight rises out of the open tower roof, then the v1 flight. Keep GAME strings, islands, outcomes.
+1. Transition from the tower: a 1 s fade through LOOK.sky.day white into the v1 flight (no tower geometry rebuilt inside Flight). Keep GAME strings, islands, outcomes.
 2. When the outcome message is done, Continue calls endFlight(result); skip in Hud still works and yields 'skipped'.
-3. Hud.tsx is flight only; remove anything labyrinth.
+(Removing the labyrinth half of Hud.tsx is done in T1; do not repeat it.)
 done when: build and check pass; B-FLIGHT passes all three outcomes plus skip.
 approved installs: none
 
@@ -350,7 +355,7 @@ files: src/chambers/ThreadChamber.tsx, plan/shots/thread-*.png
 failing test first: B-CHAMBER(thread) fails on the stub.
 steps:
 1. Room: small and quiet, a stool with a ball of thread under a soft warm light (the thread is craft).
-2. By step. 0: ball on the stool (hotspot). 1: the ball unwinds toward the entry door and the thread end ties to the door post. 2: "That was your path": World's Thread brightens (T2 handles it); the chamber adds a slow ochre pulse travelling back along the door thread. 3: cool light turns red. 4: the entry door slams with sfx.slam (a chamber-local panel drops over the entry; it does not touch World doors); the exit to the tower opens on complete.
+2. By step. 0: ball on the stool (hotspot). 1: the ball unwinds toward the entry door and the thread end ties to the door post. 2: "That was your path": World's Thread brightens (T2 handles it); the chamber adds nothing on top, one moment is enough. 3: cool light turns red. 4: the entry door slams with sfx.slam (a chamber-local panel drops over the entry; it does not touch World doors); the exit to the tower opens on complete.
 done when: build passes; B-CHAMBER(thread) both ways; thread-0..4.png.
 approved installs: none
 
@@ -417,10 +422,12 @@ approved installs: none
 
 ### T20: Release build, credits, claims (Lane Z)
 depends_on: [T19]
-files: CREDITS.md, README.md, plan/plan.md (Claims states only)
+files: CREDITS.md, README.md, plan/plan.md (Claims states only), plan/shots/submission/*.png
 steps:
+0. Screenshot set for graders who use screenshots instead of the link: copy title.png, the six chamber hero shots and a Final Balance shot (1280x720, caption or ledger text visible in each) into plan/shots/submission/ in run order.
 1. `npm run build`; `npm run preview`; B-RUN once more on the preview build in Chrome and a Safari spot check if available.
 2. CREDITS.md and README.md updated to v2 (how to play, sources, tech credits); confirm public/ has no third-party files except any approved under R2. Hosting [research 8]: vite.config.ts keeps the default base '/', which suits Netlify or Vercel from Git; GitHub Pages would need base '/<repo>/' (Abhinav picks the host; nothing is deployed in this plan).
 3. Move each claim C1 to C9 to built only if its proof passed; C9 only with the measured number.
-done when: dist/ builds; claims states updated; nothing deployed (deploy waits for Abhinav's "go").
+4. Post `@writer` on the board: drop the two [CONFIRM] marks in writeup/writeup.md and the .docx only if every chamber has a fresco wall (T7 to T18 done) and C5 is built; otherwise reword those two phrases. Writer owns writeup/, not this task.
+done when: dist/ builds; claims states updated; submission screenshots present; nothing deployed (deploy waits for Abhinav's host choice and "go").
 approved installs: none

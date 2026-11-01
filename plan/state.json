@@ -1,3 +1,23 @@
-{"mode": "product", "name": "daedalus-cams45", "stage": "gate2", "deadline": null,
- "approvals": {"gate1": null, "gate2": null, "gate3": null, "storyboard": null, "submit": null},
- "branch": "build/daedalus-v2", "design_direction": null, "success_metric": "", "runs": []}
+{
+ "mode": "product",
+ "name": "daedalus-cams45",
+ "stage": "audit",
+ "deadline": null,
+ "approvals": {
+  "gate1": {
+   "at": "Sun Nov  1 18:17:44 EST 2026",
+   "quote": "Yes, approve C"
+  },
+  "gate2": {
+   "at": "Sun Nov  1 18:17:44 EST 2026",
+   "quote": "Yes, approve C"
+  },
+  "gate3": null,
+  "storyboard": null,
+  "submit": null
+ },
+ "branch": "build/daedalus-v2",
+ "design_direction": "C Moonlit Lapis (+A plaster, +B outlines)",
+ "success_metric": "",
+ "runs": []
+}
