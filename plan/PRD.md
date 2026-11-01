@@ -30,7 +30,7 @@ Each chamber: one or two large fresco walls, one hero object, its captions in or
 
 ## Requirements
 Functional
-- R1 One continuous, hand-laid first-person interior (not procedural). Walk with WASD or arrows, look by dragging, use with E or click.
+- R1 One continuous, hand-laid first-person interior (not procedural). Walk with WASD or arrows, look with the mouse (pointer lock, scoped so overlay buttons always work) or by dragging where lock is unavailable (Safari refusal, iOS), use with E or click. Title is UI.title, "THE LABYRINTH OF DAEDALUS".
 - R2 Entering a chamber starts its captions; each hero interaction advances one caption; Continue (button or Enter) advances the same way, so the hero visuals depend only on the caption step.
 - R3 Passing the last caption writes the Ledger line and opens the exit door. Wings instead launches the flight; the flight result writes V and lands you on Icaria.
 - R4 Ariadne's thread is drawn on the floor from the entrance through every chamber to the tower. "Follow the thread" walks you to the next stop.
