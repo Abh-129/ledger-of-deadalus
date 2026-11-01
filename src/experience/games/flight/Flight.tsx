@@ -7,12 +7,14 @@ import { GAME } from '../../../content/copy';
 import { input } from '../../../input';
 import { live, useStore } from '../../../store';
 import { Person } from '../../shared/figures';
-import { COL, GLOW, GRAD, Prim, SkyDome } from '../../shared/look';
+import { COL, GLOW, GRAD, LOOK, Prim, SkyDome } from '../../shared/look';
 import { Sea } from '../../shared/sea';
 import { smooth } from '../../shared/rig';
 import { Flight as FlightState, FLIGHT_SECONDS, newFlight, step } from './physics';
 
 const SPEED = 12, H = 40, FEATHERS = 8;
+const [SKY_TOP, SKY_MID, SKY_BOT] = LOOK.sky.day;
+const SUN = new THREE.Color(COL.limestone).multiplyScalar(2.2); // white daylight, not ochre: the sun is the danger
 const mid = (a: number, b: number, t: number) => a + (b - a) * t;
 
 interface Isl { id: keyof typeof GAME.islands; x: number; z: number; s: number; label: boolean }
@@ -99,7 +101,7 @@ export default function Flight() {
     const bob = F.outcome ? 0 : Math.sin(time * 2) * 0.25;
     g.position.set(0, yy + bob, z); g.rotation.z = F.vy * -0.25; g.rotation.x = -F.vy * 0.25;
     dae.current!.position.set(-6, H * 0.5 + Math.sin(time * 1.4) * 0.5, z - 9);
-    sun.current!.position.set(0, 66, z - 330);
+    sun.current!.position.set(0, 66, z - 330); sun.current!.scale.setScalar(1 + F.alt * 0.5); // the sun swells as you climb
     if (sicily.current) sicily.current.position.set(0, -42 * (1 - smooth(37, 44, F.time)), SICILY_Z);
 
     // wings: instanced feathers, with a flap; on wax failure they peel off one by one
@@ -157,15 +159,15 @@ export default function Flight() {
 
   return (
     <>
-      <color attach="background" args={[COL.night]} />
-      <fogExp2 attach="fog" args={[COL.deepSea, 0.004]} />
-      <ambientLight intensity={0.55} color="#8aa6d6" />
-      <directionalLight position={[10, 40, -40]} intensity={1.2} color="#ffd9a0" />
-      <SkyDome top={COL.night} mid="#16304a" bottom="#2a5688" stars={0.6} />
-      <Sea amp={0.6} dens={0.004} fog={COL.deepSea} />
+      <color attach="background" args={[SKY_MID]} />
+      <fogExp2 attach="fog" args={[SKY_MID, 0.004]} />
+      <ambientLight intensity={0.8} color={SKY_MID} />
+      <directionalLight position={[10, 40, -40]} intensity={1.4} color={SKY_BOT} />
+      <SkyDome top={SKY_TOP} mid={SKY_MID} bottom={SKY_BOT} stars={0} />
+      <Sea amp={0.6} dens={0.004} fog={SKY_MID} deep={COL.lapis} mid="#3a72b8" line={SKY_MID} />
       <group ref={sun}>
-        <mesh><sphereGeometry args={[46, 32, 20]} /><meshBasicMaterial color={GLOW} toneMapped={false} fog={false} /></mesh>
-        <mesh><sphereGeometry args={[74, 24, 16]} /><meshBasicMaterial color={COL.ochre} transparent opacity={0.16} toneMapped={false} fog={false} depthWrite={false} /></mesh>
+        <mesh><sphereGeometry args={[46, 32, 20]} /><meshBasicMaterial color={SUN} toneMapped={false} fog={false} /></mesh>
+        <mesh><sphereGeometry args={[74, 24, 16]} /><meshBasicMaterial color={SKY_BOT} transparent opacity={0.16} toneMapped={false} fog={false} depthWrite={false} /></mesh>
       </group>
       {/* the middle course: a faint dotted band in the sky */}
       <MiddleBand />
@@ -190,7 +192,7 @@ export default function Flight() {
           <boxGeometry /><meshToonMaterial color={COL.limestone} gradientMap={GRAD} emissive={zone === 'sun' ? COL.ochre : '#000'} emissiveIntensity={0.25} />
         </instancedMesh>
         {zone === 'sea' && <Sparkles count={40} scale={[5, 1.5, 3]} position={[0, -0.3, 0]} size={5} speed={1.4} color="#cfe0ff" />}
-        {zone === 'sun' && <Sparkles count={50} scale={[5, 3, 3]} position={[0, 1.2, 0]} size={6} speed={0.8} color={COL.ochre} />}
+        {zone === 'sun' && <Sparkles count={50} scale={[5, 3, 3]} position={[0, 1.2, 0]} size={6} speed={0.8} color={SKY_BOT} />}
       </group>
       <instancedMesh ref={loose} args={[undefined, undefined, FEATHERS * 2]} frustumCulled={false}><boxGeometry /><meshToonMaterial color={COL.limestone} gradientMap={GRAD} /></instancedMesh>
       <instancedMesh ref={drips} args={[undefined, undefined, 14]} frustumCulled={false}><sphereGeometry args={[1, 6, 4]} /><meshBasicMaterial color={GLOW} toneMapped={false} /></instancedMesh>

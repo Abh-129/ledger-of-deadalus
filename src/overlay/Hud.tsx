@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GAME, UI } from '../content/copy';
+import { LOOK } from '../experience/shared/look';
 import { live, useLive, useStore } from '../store';
 
 export const requestSkip = () => window.dispatchEvent(new Event('game-skip'));
@@ -8,6 +9,8 @@ export default function Hud() {
   const mode = useStore((s) => s.mode);
   const L = useLive();
   const inGame = mode === 'flight';
+  const [veil, setVeil] = useState(true);
+  useEffect(() => { if (!inGame) { setVeil(true); return; } const t = setTimeout(() => setVeil(false), 30); return () => clearTimeout(t); }, [inGame]);
 
   useEffect(() => {
     if (!inGame) return;
@@ -23,6 +26,7 @@ export default function Hud() {
 
   return (
     <>
+      <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 5, pointerEvents: 'none', background: LOOK.sky.day[2], opacity: veil ? 1 : 0, transition: veil ? 'none' : 'opacity 1s ease' }} />
       {modal && !L.done && (
         <div className="modal" role="dialog" aria-label={L.gameState === 'paused' ? UI.pause : prompt}>
           <h3>{L.gameState === 'paused' ? UI.pause : prompt}</h3>
