@@ -1,0 +1,729 @@
+<title>Labyrinth of Daedalus Directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=Marcellus+SC&display=swap">
+<style>
+/* Layout: a long studio sheet. Each direction is a band: header + swatches, one hero game frame, then Ledger and Title side by side, then build notes. Single dark look (the game is night only). */
+:root {
+  --night: #0A121C; --deep-sea: #10283A; --lapis: #2457A0; --ochre: #E0A73E; --minoan-red: #B3372B;
+  --limestone: #E8E1D2; --fresco-black: #15110E; --olive: #6F7A4E; --dim: #8A97A6;
+  --ochre-ink: #8A5A06; --red-ink: #A32A1E;
+  --red-glow: #D4584A; /* derived: same red hue, lifted so Cost reads at 4.7:1 on fresco black */
+  --bg: #0A121C; --surface: #0E1823; --line: #213141; --text: #E8E1D2; --muted: #8A97A6;
+  --display: 'Marcellus SC', 'Times New Roman', serif;
+  --serif: 'EB Garamond', Georgia, serif;
+  --hand: 'Caveat', 'Segoe Print', cursive;
+  --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { background: var(--bg); color: var(--text); font-family: var(--serif); font-size: 18px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+.wrap { max-width: 1240px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; letter-spacing: .02em; }
+p { margin: 0; }
+a { color: var(--limestone); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--limestone); outline-offset: 3px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+/* masthead */
+.mast { padding-block: 48px 28px; display: grid; gap: 18px; border-bottom: 1px solid var(--line); }
+.mast h1 { font-size: clamp(34px, 5vw, 58px); line-height: 1.05; }
+.mast .brief { max-width: 68ch; color: #cfc8b9; }
+.rules { display: flex; flex-wrap: wrap; gap: 10px 22px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.rules b { font-weight: 500; }
+.rules .o { color: var(--ochre); } .rules .r { color: var(--red-glow); }
+.verdict { margin-top: 6px; padding: 16px 18px; border: 1px solid var(--line); border-left: 3px solid var(--limestone); background: var(--surface); max-width: 76ch; }
+.verdict strong { font-family: var(--display); font-weight: 400; letter-spacing: .04em; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.jump a { font-family: var(--mono); font-size: 13px; text-decoration: none; padding: 10px 14px; border: 1px solid var(--line); min-height: 44px; display: inline-flex; align-items: center; }
+.jump a:hover { border-color: var(--dim); }
+
+/* direction band */
+.dir { padding-block: 56px 8px; display: grid; gap: 28px; border-bottom: 1px solid var(--line); }
+.dir-head { display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; align-items: baseline; }
+.dir-head .letter { font-family: var(--display); font-size: clamp(56px, 8vw, 96px); line-height: .8; grid-row: span 2; color: var(--dim); }
+.dir-head h2 { font-size: clamp(26px, 3.4vw, 40px); }
+.dir-head .mood { font-style: italic; color: #cfc8b9; max-width: 62ch; }
+.rec-tag { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--night); background: var(--limestone); padding: 3px 8px; margin-left: 10px; vertical-align: middle; }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+.sw { display: grid; grid-template-rows: 54px auto; border: 1px solid var(--line); background: var(--surface); }
+.sw i { display: block; }
+.sw div { padding: 8px 10px 10px; display: grid; gap: 1px; min-width: 0; }
+.sw b { font-family: var(--display); font-weight: 400; font-size: 14px; }
+.sw code { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.sw span { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.35; }
+.sw.solved b { color: var(--ochre); } .sw.cost b { color: var(--red-glow); }
+
+.label { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: block; }
+
+/* game frame */
+.shot { container-type: inline-size; }
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; background: var(--fresco-black); border: 1px solid var(--line); }
+.stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hud { position: absolute; inset: 0; pointer-events: none; font-family: var(--mono); color: var(--limestone); }
+.hud .ch { position: absolute; left: 2.4cqw; top: 2.2cqw; display: grid; gap: .2cqw; }
+.hud .ch .n { font-family: var(--display); font-size: 1.15cqw; letter-spacing: .3em; opacity: .75; }
+.hud .ch .t { font-family: var(--display); font-size: 1.9cqw; letter-spacing: .08em; }
+.hud .tr { position: absolute; right: 2.4cqw; top: 2.2cqw; display: flex; gap: 1cqw; }
+.key { font-size: 1cqw; letter-spacing: .08em; padding: .45cqw .8cqw; border: 1px solid rgba(232,225,210,.35); background: rgba(10,18,28,.45); display: inline-flex; gap: .6cqw; align-items: center; }
+.key kbd { font-family: var(--mono); border: 1px solid rgba(232,225,210,.6); padding: 0 .4cqw; font-size: .9cqw; }
+.hud .dot { position: absolute; left: 50%; top: 50%; width: .4cqw; height: .4cqw; margin: -.2cqw; border-radius: 50%; background: var(--limestone); opacity: .7; }
+.hud .prompt { position: absolute; left: 50%; top: 56%; transform: translateX(-50%); font-size: 1.1cqw; letter-spacing: .08em; display: flex; gap: .7cqw; align-items: center; white-space: nowrap; }
+.hud .prompt kbd { font-family: var(--mono); border: 1px solid var(--limestone); padding: .1cqw .5cqw; }
+.cap { position: absolute; left: 50%; bottom: 2.6cqw; transform: translateX(-50%); width: min(58cqw, 92%); display: grid; gap: .7cqw; text-align: center; }
+.cap p { font-family: var(--serif); font-size: 1.75cqw; line-height: 1.38; color: var(--limestone); }
+.cap .src { font-family: var(--mono); font-size: .9cqw; letter-spacing: .04em; color: var(--dim); }
+.cap .btns { display: flex; gap: 1cqw; justify-content: center; }
+.cap .btns span { font-family: var(--mono); font-size: 1cqw; padding: .55cqw 1.2cqw; border: 1px solid rgba(232,225,210,.4); color: var(--limestone); }
+.cap .btns span.pri { background: var(--limestone); color: var(--night); border-color: var(--limestone); }
+/* direction skins for the caption plate */
+.skin-a .cap { padding: 1.4cqw 2cqw; background: radial-gradient(ellipse at center, rgba(21,17,14,.82), rgba(21,17,14,.55) 70%, transparent); }
+.skin-b .cap { padding: 1.2cqw 1.8cqw; background: var(--fresco-black); border-top: 2px solid var(--limestone); border-bottom: 2px solid var(--limestone); }
+.skin-b .key { background: var(--fresco-black); border-color: var(--limestone); border-radius: 0; }
+.skin-c .cap { padding: 1.6cqw 2cqw 1.2cqw; background: linear-gradient(to top, rgba(10,18,28,.9), rgba(10,18,28,.0)); width: 64cqw; }
+.skin-c .cap p { text-shadow: 0 0 1.2cqw rgba(10,18,28,.9); }
+/* phone width: the caption leaves the frame and sits under it at a readable size */
+@container (max-width: 640px) {
+  .cap { position: static; transform: none; width: auto; padding: 14px 12px !important; background: var(--fresco-black) !important; border: 1px solid var(--line) !important; border-top: 0 !important; }
+  .cap p { font-size: 16px; }
+  .cap .src { font-size: 11px; }
+  .cap .btns span { font-size: 12px; padding: 12px 14px; min-height: 44px; display: inline-flex; align-items: center; }
+  .hud .ch .n { font-size: 8px; } .hud .ch .t { font-size: 12px; }
+  .hud .tr, .hud .prompt { display: none; }
+}
+
+.pair { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+@media (max-width: 860px) { .pair { grid-template-columns: 1fr; } }
+.pair > div { min-width: 0; }
+
+/* ledger books */
+.ledger { container-type: inline-size; padding: 3cqw; display: grid; place-items: center; border: 1px solid var(--line); min-height: 100%; }
+.book { width: 100%; display: grid; grid-template-columns: 1fr 1fr; position: relative; }
+.page { padding: 4cqw 3.6cqw; display: grid; align-content: start; gap: 2.6cqw; min-width: 0; }
+.page h4 { font-family: var(--display); font-weight: 400; margin: 0; font-size: max(12px, 2.6cqw); letter-spacing: .18em; }
+.entry { display: grid; gap: .6cqw; }
+.entry .no { font-family: var(--display); font-size: max(12px, 2.3cqw); letter-spacing: .06em; }
+.entry .row { display: grid; grid-template-columns: max(46px, 9cqw) 1fr; gap: 1.2cqw; align-items: baseline; }
+.entry .k { font-family: var(--mono); font-size: max(9px, 1.45cqw); letter-spacing: .12em; }
+.entry .v { font-family: var(--hand); font-size: max(17px, 3.3cqw); line-height: 1.12; }
+.entry .note { font-family: var(--hand); font-size: max(14px, 2.4cqw); opacity: .8; }
+.entry.blank .no { opacity: .35; }
+.rule { height: max(17px, 3.3cqw); border-bottom: 1px solid currentColor; opacity: .18; }
+.close { font-family: var(--mono); font-size: max(10px, 1.4cqw); letter-spacing: .1em; opacity: .7; }
+@container (max-width: 520px) { .book { grid-template-columns: 1fr; } }
+
+/* A ledger: aged plaster paper, darker ink shades for contrast */
+.led-a { background: radial-gradient(ellipse at 40% 30%, #3a2c1f, var(--fresco-black) 70%); }
+.led-a .page { background: #E4D9C2; color: #2B241C; box-shadow: inset 0 0 4cqw rgba(90,70,40,.28); }
+.led-a .page:first-child { border-right: 1px solid #b8a888; }
+.led-a .k.s, .led-a .v.s { color: var(--ochre-ink); }
+.led-a .k.c, .led-a .v.c { color: var(--red-ink); }
+/* B ledger: black-figure, bright inks on fresco black */
+.led-b { background: var(--deep-sea); }
+.led-b .book { border: 2px solid var(--limestone); }
+.led-b .page { background: var(--fresco-black); color: var(--limestone); }
+.led-b .page:first-child { border-right: 2px solid var(--limestone); }
+.led-b .k.s, .led-b .v.s { color: var(--ochre); }
+.led-b .k.c, .led-b .v.c { color: var(--red-glow); }
+/* C ledger: moonlit vellum, cool page, warm inks are the only warm things */
+.led-c { background: radial-gradient(ellipse at 60% 0%, #1d3a57, var(--night) 70%); }
+.led-c .page { background: linear-gradient(160deg, #142c42, #0d1f30); color: #D9DEE3; box-shadow: inset 0 0 0 1px rgba(201,214,232,.18); }
+.led-c .page:first-child { border-right: 1px solid rgba(201,214,232,.25); }
+.led-c .k.s, .led-c .v.s { color: var(--ochre); }
+.led-c .k.c, .led-c .v.c { color: var(--red-glow); }
+
+/* title screens */
+.title { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden; border: 1px solid var(--line); display: grid; place-items: center; }
+.title > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.title .tt { position: relative; text-align: center; display: grid; gap: 2.4cqw; justify-items: center; padding: 6cqw; }
+.title h3 { font-size: max(18px, 5.4cqw); line-height: 1.08; letter-spacing: .08em; }
+.title .sub { font-style: italic; font-size: max(14px, 2.6cqw); opacity: .85; }
+.title .acts { display: flex; gap: 2cqw; flex-wrap: wrap; justify-content: center; font-family: var(--mono); font-size: max(11px, 1.6cqw); }
+.title .acts span { padding: max(10px, 1.2cqw) max(14px, 2.6cqw); border: 1px solid currentColor; min-height: 44px; display: inline-flex; align-items: center; }
+.title .acts span.ghost { border-color: transparent; opacity: .7; }
+.t-a { color: var(--limestone); background: var(--fresco-black); }
+.t-a h3 { text-shadow: 0 2px 18px rgba(0,0,0,.8); }
+.t-b { color: var(--limestone); background: var(--fresco-black); }
+.t-b .acts span:first-child { background: var(--limestone); color: var(--fresco-black); }
+.t-c { color: var(--limestone); background: var(--night); }
+
+.notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0; margin: 0; list-style: none; }
+@media (max-width: 860px) { .notes { grid-template-columns: 1fr; } }
+.notes li { border-top: 1px solid var(--dim); padding-top: 12px; display: grid; gap: 6px; min-width: 0; }
+.notes b { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 500; color: var(--muted); }
+.notes p { font-size: 16px; color: #d6cfc0; }
+.risk { font-size: 16px; color: #cfc8b9; max-width: 80ch; }
+.risk em { font-style: normal; font-family: var(--mono); font-size: 13px; color: var(--muted); margin-right: 8px; }
+
+.final { padding-block: 56px 0; display: grid; gap: 18px; max-width: 80ch; }
+.final h2 { font-size: clamp(26px, 3.4vw, 40px); }
+.final ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; }
+.final .q { font-family: var(--mono); font-size: 14px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .flame { animation: flick 1.6s ease-in-out infinite alternate; transform-origin: center bottom; transform-box: fill-box; }
+  .glow-pulse { animation: pulse 3.2s ease-in-out infinite alternate; }
+  .mote { animation: drift 9s linear infinite alternate; }
+}
+@keyframes flick { 0% { transform: scale(1, 1); opacity: .95; } 50% { transform: scale(.94, 1.06); } 100% { transform: scale(1.04, .95); opacity: 1; } }
+@keyframes pulse { from { opacity: .55; } to { opacity: .9; } }
+@keyframes drift { from { transform: translateY(0); } to { transform: translateY(-14px); } }
+</style>
+
+<!-- shared SVG filters and patterns -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.7 0 0 0 -0.18"/>
+    </filter>
+    <filter id="mottle" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.011 0.02" numOctaves="3" seed="9"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.1 0 0 0 -0.42"/>
+    </filter>
+    <filter id="brush" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="2" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="16"/></filter>
+    <pattern id="meanderL" width="44" height="34" patternUnits="userSpaceOnUse">
+      <path d="M2 30 H40 V4 H10 V24 H32 V12 H18 V18" fill="none" stroke="#E8E1D2" stroke-width="4"/>
+    </pattern>
+    <pattern id="meanderK" width="44" height="34" patternUnits="userSpaceOnUse">
+      <path d="M2 30 H40 V4 H10 V24 H32 V12 H18 V18" fill="none" stroke="#15110E" stroke-width="4.5"/>
+    </pattern>
+    <symbol id="swallow" viewBox="-40 -20 80 40">
+      <path d="M-36 -2 C-20 -16 -6 -10 0 -2 C6 -10 20 -16 36 -2 C20 -6 8 -2 4 4 L10 16 L0 9 L-10 16 L-4 4 C-8 -2 -20 -6 -36 -2 Z"/>
+    </symbol>
+    <symbol id="lily" viewBox="-30 -40 60 80">
+      <path d="M0 40 C-2 20 2 0 0 -8" stroke="#6F7A4E" stroke-width="4" fill="none"/>
+      <path d="M0 -8 C-6 -24 -18 -30 -26 -28 C-18 -22 -10 -16 0 -8 Z M0 -8 C6 -24 18 -30 26 -28 C18 -22 10 -16 0 -8 Z M0 -8 C-4 -22 -2 -34 0 -38 C2 -34 4 -22 0 -8 Z" fill="#E8E1D2" stroke="#15110E" stroke-width="1.5"/>
+      <path d="M-2 -10 L-6 -30 M2 -10 L6 -30" stroke="#15110E" stroke-width="1.2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+<header class="mast">
+  <span class="eyebrow">Master Designer · Round 1 · Sun 1 Nov 2026 · for Abhinav</span>
+  <h1>The Labyrinth of Daedalus</h1>
+  <p class="brief">One first-person walk through a Minoan Labyrinth that Daedalus built and cannot leave. Six chambers, one fresco and one hero object each, Ariadne's thread on the floor, the Ledger keeping score. The feeling to create: <em>quiet dread in a beautiful room</em>. Graded on a laptop in Chrome or Safari.</p>
+  <div class="rules">
+    <span><b class="o">Ochre</b> only for what was solved (the thread, Solved lines)</span>
+    <span><b class="r">Red</b> only for what it cost (Cost lines, the Minotaur's chamber)</span>
+    <span>Frescoes are painted without ochre or red, so the two Ledger colors keep their meaning</span>
+  </div>
+  <p class="verdict"><strong>Recommendation: C, Moonlit Lapis</strong>, with A's plaster texture on the fresco walls. In a cold blue world the thread and the Ledger are the only warm things you see, so the ochre and red rule becomes something you feel walking, and fog does the work of hiding low-poly geometry. Reasons in full at the end.</p>
+  <nav class="jump" aria-label="Directions">
+    <a href="#a">A · Lamplit Fresco</a><a href="#b">B · Black-Figure</a><a href="#c">C · Moonlit Lapis</a><a href="#pick">Recommendation</a>
+  </nav>
+</header>
+
+<!-- ===================== A ===================== -->
+<section class="dir" id="a">
+  <div class="dir-head">
+    <span class="letter">A</span>
+    <h2>Lamplit Fresco</h2>
+    <p class="mood">Wet plaster, oil smoke, two torches. You are a visitor in a real Bronze Age room, and the walls were painted by someone who knew what would happen here.</p>
+  </div>
+  <div class="swatches">
+    <div class="sw"><i style="background:#0A121C"></i><div><b>Night</b><code>#0A121C</code><span>shadow beyond torch reach</span></div></div>
+    <div class="sw"><i style="background:#15110E"></i><div><b>Fresco black</b><code>#15110E</code><span>outlines, soot</span></div></div>
+    <div class="sw"><i style="background:#CDBFA3"></i><div><b>Lamplit plaster</b><code>#CDBFA3</code><span>derived: limestone under torch</span></div></div>
+    <div class="sw"><i style="background:#F4E2BC"></i><div><b>Flame</b><code>#F4E2BC</code><span>derived: torch core, kept pale so it never reads as ochre</span></div></div>
+    <div class="sw"><i style="background:#2457A0"></i><div><b>Lapis</b><code>#2457A0</code><span>fresco sea, meander bands</span></div></div>
+    <div class="sw"><i style="background:#6F7A4E"></i><div><b>Olive</b><code>#6F7A4E</code><span>fresco foliage</span></div></div>
+    <div class="sw solved"><i style="background:#E0A73E"></i><div><b>Ochre</b><code>#E0A73E</code><span>thread, Solved</span></div></div>
+    <div class="sw cost"><i style="background:#A32A1E"></i><div><b>Red ink</b><code>#A32A1E</code><span>Cost, on pale paper</span></div></div>
+  </div>
+
+  <div class="shot skin-a">
+    <span class="label">Chamber II · The Cow · first-person frame</span>
+    <div class="stage">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A torchlit plaster chamber. A fresco of a leaping spotted bull over lapis waves covers the far wall. A hollow wooden cow on wheels stands at center. A glowing ochre thread runs across the stone floor to a dark doorway on the right.">
+        <defs>
+          <linearGradient id="a-ceil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070605"/><stop offset="1" stop-color="#2a2219"/></linearGradient>
+          <linearGradient id="a-lw" x1="0" x2="1"><stop offset="0" stop-color="#17120d"/><stop offset="1" stop-color="#5f523f"/></linearGradient>
+          <linearGradient id="a-rw" x1="1" x2="0"><stop offset="0" stop-color="#17120d"/><stop offset="1" stop-color="#5a4d3b"/></linearGradient>
+          <radialGradient id="a-back" cx=".5" cy=".55" r=".7"><stop offset="0" stop-color="#bfb092"/><stop offset=".6" stop-color="#8a7a60"/><stop offset="1" stop-color="#4a3f31"/></radialGradient>
+          <linearGradient id="a-floor" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0d0b08"/><stop offset="1" stop-color="#4b3f30"/></linearGradient>
+          <radialGradient id="a-torch"><stop offset="0" stop-color="#F4E2BC" stop-opacity=".55"/><stop offset=".35" stop-color="#e8c993" stop-opacity=".18"/><stop offset="1" stop-color="#e8c993" stop-opacity="0"/></radialGradient>
+          <radialGradient id="a-vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".8"/></radialGradient>
+          <linearGradient id="a-cowlit" x1="0" x2="1"><stop offset="0" stop-color="#F4E2BC" stop-opacity=".25"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+        </defs>
+        <rect width="1600" height="900" fill="#15110E"/>
+        <polygon points="0,0 1600,0 1180,150 420,150" fill="url(#a-ceil)"/>
+        <polygon points="0,0 420,150 420,650 0,900" fill="url(#a-lw)"/>
+        <polygon points="1600,0 1180,150 1180,650 1600,900" fill="url(#a-rw)"/>
+        <rect x="420" y="150" width="760" height="500" fill="url(#a-back)"/>
+        <polygon points="0,900 420,650 1180,650 1600,900" fill="url(#a-floor)"/>
+        <g stroke="#0a0806" stroke-opacity=".55" stroke-width="2">
+          <line x1="560" y1="650" x2="300" y2="900"/><line x1="700" y1="650" x2="620" y2="900"/><line x1="900" y1="650" x2="980" y2="900"/><line x1="1040" y1="650" x2="1300" y2="900"/>
+          <line x1="250" y1="752" x2="1350" y2="752"/><line x1="120" y1="830" x2="1480" y2="830"/>
+        </g>
+        <!-- fresco -->
+        <g>
+          <rect x="480" y="205" width="640" height="350" fill="#D8CDB6"/>
+          <g filter="url(#brush)">
+            <rect x="480" y="205" width="640" height="34" fill="#2457A0"/><rect x="480" y="205" width="640" height="34" fill="url(#meanderL)"/>
+            <rect x="480" y="521" width="640" height="34" fill="#2457A0"/><rect x="480" y="521" width="640" height="34" fill="url(#meanderL)"/>
+            <path d="M490 498 Q530 470 570 498 T650 498 T730 498 T810 498 T890 498 T970 498 T1050 498 T1110 492" fill="none" stroke="#2457A0" stroke-width="12"/>
+            <path d="M490 516 Q530 492 570 516 T650 516 T730 516 T810 516 T890 516 T970 516 T1050 516 T1110 512" fill="none" stroke="#10283A" stroke-width="7"/>
+            <path d="M652 372 C610 350 600 320 585 296" fill="none" stroke="#15110E" stroke-width="5"/>
+            <g stroke="#15110E" stroke-width="12" stroke-linecap="round" fill="none">
+              <path d="M880 408 L960 440 L1000 444"/><path d="M860 418 L930 466 L975 474"/>
+              <path d="M690 402 L620 436 L575 436"/><path d="M712 414 L650 466 L605 474"/>
+            </g>
+            <ellipse cx="790" cy="385" rx="142" ry="48" fill="#E8E1D2" stroke="#15110E" stroke-width="5"/>
+            <path d="M915 360 C950 335 985 330 1010 345 C1030 357 1035 380 1020 392 C1000 400 975 395 950 392 Z" fill="#E8E1D2" stroke="#15110E" stroke-width="5"/>
+            <path d="M995 340 C1000 300 1030 290 1052 300 M984 338 C980 305 960 290 944 292" fill="none" stroke="#15110E" stroke-width="6" stroke-linecap="round"/>
+            <ellipse cx="740" cy="370" rx="32" ry="18" fill="#15110E"/><ellipse cx="822" cy="398" rx="26" ry="13" fill="#15110E"/><ellipse cx="882" cy="370" rx="18" ry="11" fill="#15110E"/>
+            <circle cx="1006" cy="356" r="4" fill="#15110E"/>
+            <path d="M560 300 c10 -20 30 -20 34 0 c4 20 -24 26 -22 6" fill="none" stroke="#6F7A4E" stroke-width="5"/>
+            <path d="M1060 270 c-10 -20 -30 -20 -34 0 c-4 20 24 26 22 6" fill="none" stroke="#6F7A4E" stroke-width="5"/>
+          </g>
+          <rect x="480" y="205" width="640" height="350" filter="url(#mottle)" fill="#3a2c1f" opacity=".7"/>
+          <path d="M1020 205 l-14 60 l18 40 l-10 50 M520 555 l20 -40 l-6 -30" fill="none" stroke="#3a2f22" stroke-width="2" opacity=".7"/>
+        </g>
+        <rect x="420" y="150" width="760" height="500" filter="url(#grain)" fill="#000" opacity=".9"/>
+        <!-- door on right wall -->
+        <polygon points="1260,300 1380,265 1380,766 1260,696" fill="#040302"/>
+        <polygon points="1250,296 1260,300 1260,696 1250,692" fill="#7a6a52"/>
+        <!-- torches -->
+        <g><rect x="222" y="370" width="16" height="70" fill="#2a2016"/><path d="M212 372 h36 l-6 -14 h-24 z" fill="#3a2c1f"/>
+          <path class="flame" d="M230 300 C214 326 216 346 230 358 C244 346 246 326 230 300 Z" fill="#F4E2BC"/></g>
+        <g><rect x="1492" y="360" width="16" height="72" fill="#2a2016"/><path d="M1482 362 h36 l-6 -14 h-24 z" fill="#3a2c1f"/>
+          <path class="flame" d="M1500 290 C1484 316 1486 336 1500 348 C1514 336 1516 316 1500 290 Z" fill="#F4E2BC"/></g>
+        <circle cx="230" cy="340" r="380" fill="url(#a-torch)" style="mix-blend-mode:screen"/>
+        <circle cx="1500" cy="330" r="380" fill="url(#a-torch)" style="mix-blend-mode:screen"/>
+        <!-- hero: hollow wooden cow on wheels -->
+        <ellipse cx="800" cy="796" rx="210" ry="22" fill="#000" opacity=".55"/>
+        <g>
+          <rect x="675" y="712" width="16" height="34" fill="#4a3826"/><rect x="705" y="712" width="16" height="34" fill="#3a2c1f"/>
+          <rect x="885" y="712" width="16" height="34" fill="#4a3826"/><rect x="915" y="712" width="16" height="34" fill="#3a2c1f"/>
+          <rect x="640" y="742" width="330" height="18" fill="#3a2c1f" stroke="#15110E" stroke-width="3"/>
+          <g stroke="#a8987a" stroke-width="4"><circle cx="680" cy="772" r="26" fill="#15110E"/><circle cx="930" cy="772" r="26" fill="#15110E"/>
+            <path d="M680 746 V798 M654 772 H706 M930 746 V798 M904 772 H956" stroke-width="3"/></g>
+          <path d="M652 650 C630 660 625 690 632 716" fill="none" stroke="#15110E" stroke-width="5"/>
+          <rect x="650" y="624" width="300" height="96" rx="42" fill="#D6C9AE" stroke="#15110E" stroke-width="4"/>
+          <ellipse cx="720" cy="656" rx="40" ry="22" fill="#15110E"/><ellipse cx="852" cy="692" rx="34" ry="17" fill="#15110E"/><ellipse cx="905" cy="650" rx="22" ry="13" fill="#15110E"/>
+          <rect x="764" y="646" width="70" height="50" fill="none" stroke="#4a3826" stroke-width="3" stroke-dasharray="6 5"/>
+          <path d="M935 640 C960 600 1010 590 1035 610 C1050 625 1045 655 1025 662 C1000 668 960 665 945 660 Z" fill="#D6C9AE" stroke="#15110E" stroke-width="4"/>
+          <path d="M1000 600 C1005 576 1025 568 1042 576 M985 602 C978 582 962 576 950 580" fill="none" stroke="#15110E" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="1020" cy="622" r="4" fill="#15110E"/>
+          <rect x="640" y="590" width="420" height="215" fill="url(#a-cowlit)" style="mix-blend-mode:multiply"/>
+        </g>
+        <!-- Ariadne's thread -->
+        <g class="glow-pulse"><path d="M560 900 C600 840 560 815 620 805 C700 792 760 818 860 818 C980 818 1080 792 1150 762 C1220 732 1270 722 1310 718" fill="none" stroke="#E0A73E" stroke-width="12" opacity=".45" filter="url(#soft)"/></g>
+        <path d="M560 900 C600 840 560 815 620 805 C700 792 760 818 860 818 C980 818 1080 792 1150 762 C1220 732 1270 722 1310 718" fill="none" stroke="#E0A73E" stroke-width="3.5" filter="url(#glow)"/>
+        <rect width="1600" height="900" fill="url(#a-vig)"/>
+      </svg>
+      <div class="hud">
+        <div class="ch"><span class="n">II OF VI</span><span class="t">The Cow</span></div>
+        <div class="tr"><span class="key"><kbd>L</kbd> Ledger</span><span class="key">Sound off</span></div>
+        <span class="dot"></span>
+        <div class="prompt"><kbd>E</kbd> Examine the cow</div>
+      </div>
+    </div>
+    <div class="cap">
+      <p>Daedalus builds a hollow wooden cow on wheels and covers it in real hide. The queen climbs inside.</p>
+      <span class="src">Apollodorus, Library 3.1.3-4 · Ovid, Metamorphoses 8.131-137</span>
+      <div class="btns"><span>Skip, tell me what happens</span><span class="pri">Continue</span></div>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div>
+      <span class="label">Ledger, open (after Chamber II)</span>
+      <div class="ledger led-a">
+        <div class="book">
+          <div class="page">
+            <h4>The Ledger</h4>
+            <div class="entry"><span class="no">I · The Saw</span>
+              <div class="row"><span class="k s">SOLVED</span><span class="v s">Wood can be cut. A circle can be drawn. <span class="note">(not his invention)</span></span></div>
+              <div class="row"><span class="k c">COST</span><span class="v c">Perdix. Daedalus is tried for murder and flees to Crete.</span></div></div>
+            <div class="entry"><span class="no">II · The Cow</span>
+              <div class="row"><span class="k s">SOLVED</span><span class="v s">The queen’s request, delivered in full.</span></div>
+              <div class="row"><span class="k c">COST</span><span class="v c">The Minotaur.</span></div></div>
+          </div>
+          <div class="page">
+            <div class="entry blank"><span class="no">III · The Labyrinth</span><div class="rule"></div><div class="rule"></div></div>
+            <div class="entry blank"><span class="no">IV · The Thread</span><div class="rule"></div><div class="rule"></div></div>
+            <div class="entry blank"><span class="no">V · The Wings</span><div class="rule"></div></div>
+            <span class="close">L  Close the Ledger</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="label">Title screen</span>
+      <div class="title t-a">
+        <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs><radialGradient id="at-w" cx=".5" cy=".42" r=".65"><stop offset="0" stop-color="#8f7f63"/><stop offset=".55" stop-color="#3f3427"/><stop offset="1" stop-color="#0c0a08"/></radialGradient></defs>
+          <rect width="1600" height="1000" fill="url(#at-w)"/>
+          <rect width="1600" height="1000" filter="url(#mottle)" fill="#15110E" opacity=".8"/>
+          <g filter="url(#brush)"><rect x="0" y="120" width="1600" height="40" fill="#2457A0"/><rect x="0" y="120" width="1600" height="40" fill="url(#meanderL)"/>
+            <rect x="0" y="840" width="1600" height="40" fill="#2457A0"/><rect x="0" y="840" width="1600" height="40" fill="url(#meanderL)"/></g>
+          <rect width="1600" height="1000" filter="url(#grain)" fill="#000"/>
+          <path class="glow-pulse" d="M800 1000 C780 940 840 900 800 860" fill="none" stroke="#E0A73E" stroke-width="4" filter="url(#glow)"/>
+        </svg>
+        <div class="tt"><h3>The Labyrinth<br>of Daedalus</h3><p class="sub">Six inventions. Every one of them worked.</p><div class="acts"><span>Begin</span><span class="ghost">Sound on</span><span class="ghost">Sources</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="notes">
+    <li><b>Materials</b><p>One shared MeshStandardMaterial for plaster with a single 512 px tiling noise map as roughness and bump. Each fresco is one CanvasTexture painted once at load (or a CC0 image) at 2048 x 1024, sRGB, no mipmap churn.</p></li>
+    <li><b>Lighting</b><p>Two flickering PointLights per chamber, only the current chamber's lights enabled (cap four on screen). HemisphereLight in night blue as fill. One 512 px shadow from the nearest torch, everything else unshadowed.</p></li>
+    <li><b>Post</b><p>ACES tone mapping, Bloom with a high threshold so only flames and the thread bloom, Vignette, faint Noise. Four point lights is the most expensive option of the three on Safari.</p></li>
+  </ul>
+  <p class="risk"><em>Watch</em>Torchlight is warm, so the room fights the ochre rule. The flame must stay pale cream, and realism invites comparison with games that have baked lighting. Hardest of the three to make look finished.</p>
+</section>
+
+<!-- ===================== B ===================== -->
+<section class="dir" id="b">
+  <div class="dir-head">
+    <span class="letter">B</span>
+    <h2>Black-Figure</h2>
+    <p class="mood">The story as a painted pot you have walked inside. Flat planes, hard silhouettes, the meander everywhere, because the Labyrinth is a meander you can stand in.</p>
+  </div>
+  <div class="swatches">
+    <div class="sw"><i style="background:#0A121C"></i><div><b>Night</b><code>#0A121C</code><span>ceiling, void</span></div></div>
+    <div class="sw"><i style="background:#10283A"></i><div><b>Deep sea</b><code>#10283A</code><span>side walls, flat</span></div></div>
+    <div class="sw"><i style="background:#C9C0AE"></i><div><b>Night limestone</b><code>#C9C0AE</code><span>derived: limestone in moonlight, fresco ground</span></div></div>
+    <div class="sw"><i style="background:#15110E"></i><div><b>Fresco black</b><code>#15110E</code><span>every figure, every outline</span></div></div>
+    <div class="sw"><i style="background:#3D4752"></i><div><b>Iron</b><code>#3D4752</code><span>derived: night blended into fresco black</span></div></div>
+    <div class="sw solved"><i style="background:#E0A73E"></i><div><b>Ochre</b><code>#E0A73E</code><span>thread, Solved</span></div></div>
+    <div class="sw cost"><i style="background:#D4584A"></i><div><b>Red, lifted</b><code>#D4584A</code><span>derived: Cost on black, 4.7:1</span></div></div>
+  </div>
+
+  <div class="shot skin-b">
+    <span class="label">Chamber I · The Saw · first-person frame</span>
+    <div class="stage">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A flat, graphic chamber. The far wall is pale stone painted with black figures: a fish spine, a boy reaching toward it, a compass, and a small partridge sitting low. Double axes are painted on the blue side walls. An iron saw lies on a stone plinth. A flat ochre thread crosses the black floor to a doorway on the left.">
+        <rect width="1600" height="900" fill="#0A121C"/>
+        <polygon points="0,0 1600,0 1180,150 420,150" fill="#070d14"/>
+        <polygon points="0,0 420,150 420,650 0,900" fill="#10283A"/>
+        <polygon points="1600,0 1180,150 1180,650 1600,900" fill="#0c2030"/>
+        <polygon points="0,900 420,650 1180,650 1600,900" fill="#15110E"/>
+        <g stroke="#C9C0AE" stroke-opacity=".14" stroke-width="2"><line x1="560" y1="650" x2="300" y2="900"/><line x1="700" y1="650" x2="620" y2="900"/><line x1="900" y1="650" x2="980" y2="900"/><line x1="1040" y1="650" x2="1300" y2="900"/><line x1="250" y1="752" x2="1350" y2="752"/><line x1="120" y1="830" x2="1480" y2="830"/></g>
+        <polygon points="420,650 1180,650 1330,740 270,740" fill="#C9C0AE" opacity=".06"/>
+        <!-- labrys on side walls -->
+        <g transform="matrix(1 .2 0 1 0 0)" fill="#15110E">
+          <rect x="196" y="250" width="10" height="360"/>
+          <path d="M201 300 C150 270 120 300 110 340 C120 380 150 410 201 380 Z M201 300 C252 270 282 300 292 340 C282 380 252 410 201 380 Z"/>
+        </g>
+        <g transform="matrix(1 -.2 0 1 0 320)" fill="#15110E">
+          <rect x="1394" y="250" width="10" height="360"/>
+          <path d="M1399 300 C1348 270 1318 300 1308 340 C1318 380 1348 410 1399 380 Z M1399 300 C1450 270 1480 300 1490 340 C1480 380 1450 410 1399 380 Z"/>
+        </g>
+        <!-- doorway left -->
+        <polygon points="160,300 280,318 280,733 160,805" fill="#05080c"/>
+        <!-- back wall fresco -->
+        <rect x="420" y="150" width="760" height="500" fill="#C9C0AE"/>
+        <g filter="url(#brush)">
+          <rect x="420" y="168" width="760" height="34" fill="url(#meanderK)"/>
+          <rect x="420" y="598" width="760" height="34" fill="url(#meanderK)"/>
+          <line x1="430" y1="585" x2="1170" y2="585" stroke="#15110E" stroke-width="4"/>
+          <!-- fish spine -->
+          <g stroke="#15110E" stroke-width="6" stroke-linecap="round" fill="none">
+            <path d="M480 400 H660"/>
+            <path d="M500 400 l-8 -26 M500 400 l-8 26 M524 400 l-6 -32 M524 400 l-6 32 M548 400 l-4 -36 M548 400 l-4 36 M572 400 l-2 -36 M572 400 l-2 36 M596 400 l0 -32 M596 400 l0 32 M620 400 l2 -26 M620 400 l2 26"/>
+          </g>
+          <path d="M660 380 L700 400 L660 420 Z M480 400 L452 378 L460 400 L452 422 Z" fill="#15110E"/>
+          <!-- Perdix -->
+          <g fill="#15110E">
+            <circle cx="800" cy="300" r="22"/>
+            <path d="M784 322 H816 L832 432 H768 Z"/>
+            <path d="M778 430 L764 540 H786 L796 444 H804 L814 540 H836 L822 430 Z"/>
+            <path d="M790 336 L716 356 L712 370 L796 354 Z"/>
+            <path d="M812 340 L850 390 L842 396 L806 352 Z"/>
+          </g>
+          <g stroke="#C9C0AE" stroke-width="2" fill="none"><path d="M776 410 H824 M772 420 H828"/><path d="M790 292 a10 10 0 0 1 18 -2"/></g>
+          <!-- compass -->
+          <g stroke="#15110E" stroke-width="10" stroke-linecap="round"><line x1="1000" y1="290" x2="958" y2="520"/><line x1="1000" y1="290" x2="1042" y2="520"/></g>
+          <circle cx="1000" cy="290" r="13" fill="#15110E"/>
+          <path d="M930 548 A92 92 0 0 0 1070 548" fill="none" stroke="#15110E" stroke-width="3" stroke-dasharray="8 7"/>
+          <!-- partridge, staying low -->
+          <g fill="#15110E"><ellipse cx="1112" cy="568" rx="30" ry="15"/><circle cx="1140" cy="552" r="9"/><path d="M1148 552 l10 3 l-10 3 Z M1084 566 l-18 -8 l4 12 Z"/></g>
+        </g>
+        <rect x="420" y="150" width="760" height="500" filter="url(#grain)" fill="#000" opacity=".35"/>
+        <!-- plinth and saw -->
+        <polygon points="930,710 1010,800 1010,815 930,800" fill="#05080c"/>
+        <polygon points="700,690 900,690 930,710 670,710" fill="#C9C0AE" stroke="#15110E" stroke-width="4"/>
+        <rect x="670" y="710" width="260" height="90" fill="#7d7668" stroke="#15110E" stroke-width="4"/>
+        <line x1="680" y1="726" x2="920" y2="726" stroke="#15110E" stroke-width="2"/>
+        <rect x="640" y="664" width="52" height="30" fill="#15110E"/><line x1="648" y1="679" x2="684" y2="679" stroke="#C9C0AE" stroke-width="2"/>
+        <polygon points="690,668 900,672 900,690 690,690" fill="#3D4752" stroke="#15110E" stroke-width="4"/>
+        <path d="M694 690 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 Z" fill="#3D4752" stroke="#15110E" stroke-width="3" stroke-linejoin="round"/>
+        <line x1="696" y1="672" x2="894" y2="675" stroke="#C9C0AE" stroke-width="2"/>
+        <!-- thread, flat -->
+        <path d="M1020 900 C980 850 900 846 760 846 C560 846 420 830 330 800 C280 784 250 778 220 774" fill="none" stroke="#E0A73E" stroke-width="7" stroke-linecap="round"/>
+      </svg>
+      <div class="hud">
+        <div class="ch"><span class="n">I OF VI</span><span class="t">The Saw</span></div>
+        <div class="tr"><span class="key"><kbd>L</kbd> Ledger</span><span class="key">Sound off</span></div>
+        <span class="dot"></span>
+        <div class="prompt"><kbd>E</kbd> Examine the saw</div>
+      </div>
+    </div>
+    <div class="cap">
+      <p>The boy studies the spine of a fish and cuts its teeth into iron. He has invented the saw.</p>
+      <span class="src">Ovid, Metamorphoses 8.236-259 · Apollodorus, Library 3.15.8 (names the boy Talos)</span>
+      <div class="btns"><span>Skip, tell me what happens</span><span class="pri">Continue</span></div>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div>
+      <span class="label">Ledger, open (after Chamber II)</span>
+      <div class="ledger led-b">
+        <div class="book">
+          <div class="page">
+            <h4>The Ledger</h4>
+            <div class="entry"><span class="no">I · The Saw</span>
+              <div class="row"><span class="k s">SOLVED</span><span class="v s">Wood can be cut. A circle can be drawn. <span class="note">(not his invention)</span></span></div>
+              <div class="row"><span class="k c">COST</span><span class="v c">Perdix. Daedalus is tried for murder and flees to Crete.</span></div></div>
+            <div class="entry"><span class="no">II · The Cow</span>
+              <div class="row"><span class="k s">SOLVED</span><span class="v s">The queen’s request, delivered in full.</span></div>
+              <div class="row"><span class="k c">COST</span><span class="v c">The Minotaur.</span></div></div>
+          </div>
+          <div class="page">
+            <div class="entry blank"><span class="no">III · The Labyrinth</span><div class="rule"></div><div class="rule"></div></div>
+            <div class="entry blank"><span class="no">IV · The Thread</span><div class="rule"></div><div class="rule"></div></div>
+            <div class="entry blank"><span class="no">V · The Wings</span><div class="rule"></div></div>
+            <span class="close">L  Close the Ledger</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="label">Title screen</span>
+      <div class="title t-b">
+        <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="1600" height="1000" fill="#15110E"/>
+          <g fill="none" stroke="#10283A" stroke-width="34">
+            <path d="M800 920 V860 H260 V140 H1340 V860 H900 V780 H1260 V220 H340 V780 H700 V700 H420 V300 H1180 V700 H900 V620 H1100 V380 H500 V620 H700 V540 H580 V460 H1020 V540 H900"/>
+          </g>
+          <rect x="0" y="40" width="1600" height="34" fill="url(#meanderL)" opacity=".85"/>
+          <rect x="0" y="926" width="1600" height="34" fill="url(#meanderL)" opacity=".85"/>
+        </svg>
+        <div class="tt"><h3>The Labyrinth<br>of Daedalus</h3><p class="sub">Six inventions. Every one of them worked.</p><div class="acts"><span>Begin</span><span class="ghost">Sound on</span><span class="ghost">Sources</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="notes">
+    <li><b>Materials</b><p>MeshToonMaterial with a 2-step gradientMap (the v1 toon kit in src/experience/shared/look.tsx already does this) or plain MeshBasicMaterial. Outlines from drei Outlines or an inverted back-face hull. Frescoes drawn as flat vector to canvas, tiny textures.</p></li>
+    <li><b>Lighting</b><p>Effectively none: one DirectionalLight to drive the toon steps, zero shadows. Hard floor shadows are flat black decal planes placed by hand under each hero object.</p></li>
+    <li><b>Post</b><p>SMAA and a light Vignette only, no Bloom (the thread is flat ochre by design). Cheapest by far; holds 60 fps on Safari and integrated GPUs.</p></li>
+  </ul>
+  <p class="risk"><em>Watch</em>Black-figure is Greek pottery, centuries after Minoan fresco, which the decisions ledger names as the look. It reads as stylish but less like the brief's Knossos, and flat lighting makes walking feel less like being in a place.</p>
+</section>
+
+<!-- ===================== C ===================== -->
+<section class="dir" id="c">
+  <div class="dir-head">
+    <span class="letter">C</span>
+    <h2>Moonlit Lapis <span class="rec-tag">Recommended</span></h2>
+    <p class="mood">Night inside a prison that is also a masterpiece. Moonlight falls in shafts from openings you cannot reach. The only warm things in the whole place are the thread and the Ledger.</p>
+  </div>
+  <div class="swatches">
+    <div class="sw"><i style="background:#0A121C"></i><div><b>Night</b><code>#0A121C</code><span>fog far colour, sky</span></div></div>
+    <div class="sw"><i style="background:#10283A"></i><div><b>Deep sea</b><code>#10283A</code><span>walls, fog near colour</span></div></div>
+    <div class="sw"><i style="background:#2457A0"></i><div><b>Lapis</b><code>#2457A0</code><span>fresco, shaft tint</span></div></div>
+    <div class="sw"><i style="background:#C9D6E8"></i><div><b>Moonlight</b><code>#C9D6E8</code><span>derived: limestone cooled toward lapis</span></div></div>
+    <div class="sw"><i style="background:#E8E1D2"></i><div><b>Limestone</b><code>#E8E1D2</code><span>fresco ground, captions</span></div></div>
+    <div class="sw"><i style="background:#6F7A4E"></i><div><b>Olive</b><code>#6F7A4E</code><span>lily stems, rocks</span></div></div>
+    <div class="sw solved"><i style="background:#E0A73E"></i><div><b>Ochre</b><code>#E0A73E</code><span>thread, Solved</span></div></div>
+    <div class="sw cost"><i style="background:#D4584A"></i><div><b>Red, lifted</b><code>#D4584A</code><span>derived: Cost, chamber III light</span></div></div>
+  </div>
+
+  <div class="shot skin-c">
+    <span class="label">Chamber V · The Wings (tower room) · first-person frame</span>
+    <div class="stage">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A tall moonlit tower room in blue. Moonlight falls in a shaft from a high arched window onto a fresco of lilies and swallows. At center a pair of feathered wings hangs on a wooden frame, feathers laid from shortest to longest. A glowing ochre thread crosses the floor to a doorway on the right.">
+        <defs>
+          <linearGradient id="c-ceil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05090f"/><stop offset="1" stop-color="#0d2132"/></linearGradient>
+          <linearGradient id="c-lw" x1="0" x2="1"><stop offset="0" stop-color="#070d14"/><stop offset="1" stop-color="#173552"/></linearGradient>
+          <linearGradient id="c-rw" x1="1" x2="0"><stop offset="0" stop-color="#070d14"/><stop offset="1" stop-color="#14304a"/></linearGradient>
+          <radialGradient id="c-back" cx=".52" cy=".25" r=".85"><stop offset="0" stop-color="#9fb0c4"/><stop offset=".45" stop-color="#4e6680"/><stop offset="1" stop-color="#14293d"/></radialGradient>
+          <linearGradient id="c-floor" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#05090f"/><stop offset="1" stop-color="#1c3550"/></linearGradient>
+          <linearGradient id="c-shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9D6E8" stop-opacity=".55"/><stop offset="1" stop-color="#2457A0" stop-opacity="0"/></linearGradient>
+          <radialGradient id="c-pool"><stop offset="0" stop-color="#C9D6E8" stop-opacity=".35"/><stop offset="1" stop-color="#C9D6E8" stop-opacity="0"/></radialGradient>
+          <linearGradient id="c-fog" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#2457A0" stop-opacity="0"/><stop offset="1" stop-color="#10283A" stop-opacity=".55"/></linearGradient>
+          <radialGradient id="c-vig" cx=".5" cy=".45" r=".78"><stop offset=".5" stop-color="#0A121C" stop-opacity="0"/><stop offset="1" stop-color="#0A121C" stop-opacity=".9"/></radialGradient>
+        </defs>
+        <rect width="1600" height="900" fill="#0A121C"/>
+        <polygon points="0,0 1600,0 1180,150 420,150" fill="url(#c-ceil)"/>
+        <polygon points="0,0 420,150 420,650 0,900" fill="url(#c-lw)"/>
+        <polygon points="1600,0 1180,150 1180,650 1600,900" fill="url(#c-rw)"/>
+        <rect x="420" y="150" width="760" height="500" fill="url(#c-back)"/>
+        <polygon points="0,900 420,650 1180,650 1600,900" fill="url(#c-floor)"/>
+        <g stroke="#05090f" stroke-opacity=".7" stroke-width="2"><line x1="560" y1="650" x2="300" y2="900"/><line x1="700" y1="650" x2="620" y2="900"/><line x1="900" y1="650" x2="980" y2="900"/><line x1="1040" y1="650" x2="1300" y2="900"/><line x1="250" y1="752" x2="1350" y2="752"/><line x1="120" y1="830" x2="1480" y2="830"/></g>
+        <!-- fresco: Akrotiri-style rocks, lilies, swallows -->
+        <g opacity=".92">
+          <g filter="url(#brush)">
+            <path d="M420 650 V560 C470 520 520 590 580 548 C640 506 690 580 760 560 C830 540 860 600 940 566 C1020 532 1080 590 1180 548 V650 Z" fill="#2457A0"/>
+            <path d="M420 650 V600 C480 570 540 630 610 600 C680 570 740 628 820 606 C900 584 960 636 1040 604 C1100 580 1140 610 1180 596 V650 Z" fill="#6F7A4E"/>
+            <path d="M420 650 V628 C500 610 560 646 650 630 C740 614 820 650 920 632 C1020 614 1100 646 1180 630 V650 Z" fill="#E8E1D2" opacity=".6"/>
+            <use href="#lily" x="470" y="470" width="60" height="100"/>
+            <use href="#lily" x="530" y="450" width="70" height="120"/>
+            <use href="#lily" x="1040" y="460" width="66" height="112"/>
+            <use href="#lily" x="1100" y="480" width="56" height="96"/>
+            <g fill="#15110E"><use href="#swallow" x="520" y="250" width="90" height="45"/><use href="#swallow" x="1010" y="230" width="100" height="50"/><use href="#swallow" x="1060" y="330" width="70" height="35"/></g>
+            <g fill="#2457A0"><use href="#swallow" x="470" y="350" width="74" height="37"/><use href="#swallow" x="600" y="320" width="60" height="30"/></g>
+          </g>
+          <rect x="420" y="150" width="760" height="500" filter="url(#mottle)" fill="#0A121C" opacity=".75"/>
+        </g>
+        <rect x="420" y="150" width="760" height="500" filter="url(#grain)" fill="#000" opacity=".55"/>
+        <!-- window and moon -->
+        <path d="M740 340 V230 A60 60 0 0 1 860 230 V340 Z" fill="#1d3f66"/>
+        <circle cx="812" cy="236" r="24" fill="#E8EEF5"/>
+        <path d="M740 340 V230 A60 60 0 0 1 860 230 V340 Z" fill="none" stroke="#E8E1D2" stroke-opacity=".5" stroke-width="4"/>
+        <!-- door right, faint -->
+        <polygon points="1260,300 1380,265 1380,766 1260,696" fill="#03060a"/>
+        <polygon points="1250,296 1260,300 1260,696 1250,692" fill="#3d5a78"/>
+        <!-- shafts -->
+        <g style="mix-blend-mode:screen">
+          <polygon points="742,330 858,330 1090,840 760,860" fill="url(#c-shaft)" filter="url(#soft)" opacity=".9"/>
+          <polygon points="780,330 830,330 960,840 860,850" fill="url(#c-shaft)" filter="url(#soft)" opacity=".6"/>
+          <ellipse cx="930" cy="830" rx="230" ry="44" fill="url(#c-pool)"/>
+        </g>
+        <g id="motes" fill="#E8EEF5"></g>
+        <!-- hero: the wings on their frame -->
+        <ellipse cx="800" cy="812" rx="190" ry="18" fill="#03060a" opacity=".7"/>
+        <g stroke="#1a1510" stroke-width="10" stroke-linecap="round"><line x1="800" y1="600" x2="700" y2="808"/><line x1="800" y1="600" x2="900" y2="808"/><line x1="742" y1="720" x2="858" y2="720"/></g>
+        <g id="wings"></g>
+        <!-- thread -->
+        <g class="glow-pulse"><path d="M700 900 C740 860 820 860 900 862 C1040 866 1120 800 1180 766 C1230 738 1270 724 1310 718" fill="none" stroke="#E0A73E" stroke-width="16" opacity=".5" filter="url(#soft)"/></g>
+        <path d="M700 900 C740 860 820 860 900 862 C1040 866 1120 800 1180 766 C1230 738 1270 724 1310 718" fill="none" stroke="#E0A73E" stroke-width="3.5" filter="url(#glow)"/>
+        <rect width="1600" height="900" fill="url(#c-fog)"/>
+        <rect width="1600" height="900" fill="url(#c-vig)"/>
+      </svg>
+      <div class="hud">
+        <div class="ch"><span class="n">V OF VI</span><span class="t">The Wings</span></div>
+        <div class="tr"><span class="key"><kbd>L</kbd> Ledger</span><span class="key">Sound off</span></div>
+        <span class="dot"></span>
+        <div class="prompt"><kbd>E</kbd> Examine the wings</div>
+      </div>
+    </div>
+    <div class="cap">
+      <p>Daedalus lays out feathers from shortest to longest, ties them with thread, and seals them with wax.</p>
+      <span class="src">Ovid, Metamorphoses 8.183-230 · Apollodorus, Epitome 1.12-13</span>
+      <div class="btns"><span>Skip, tell me what happens</span><span class="pri">Continue</span></div>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div>
+      <span class="label">Ledger, open (after Chamber IV)</span>
+      <div class="ledger led-c">
+        <div class="book">
+          <div class="page">
+            <h4>The Ledger</h4>
+            <div class="entry"><span class="no">III · The Labyrinth</span>
+              <div class="row"><span class="k s">SOLVED</span><span class="v s">The king’s shame is out of sight.</span></div>
+              <div class="row"><span class="k c">COST</span><span class="v c">Fourteen Athenians with every tribute.</span></div></div>
+            <div class="entry"><span class="no">IV · The Thread</span>
+              <div class="row"><span class="k s">SOLVED</span><span class="v s">Theseus kills the Minotaur and escapes. The tribute ends.</span></div>
+              <div class="row"><span class="k c">COST</span><span class="v c">Daedalus and Icarus imprisoned in his own maze.</span></div></div>
+          </div>
+          <div class="page">
+            <div class="entry blank"><span class="no">V · The Wings</span><div class="rule"></div><div class="rule"></div></div>
+            <div class="entry blank"><span class="no">VI · The Partridge</span><div class="rule"></div><div class="rule"></div></div>
+            <span class="close">I and II on the previous page · L  Close</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="label">Title screen</span>
+      <div class="title t-c">
+        <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <radialGradient id="ct-sky" cx=".5" cy=".1" r=".9"><stop offset="0" stop-color="#1d3f66"/><stop offset=".5" stop-color="#10283A"/><stop offset="1" stop-color="#0A121C"/></radialGradient>
+          </defs>
+          <rect width="1600" height="1000" fill="url(#ct-sky)"/>
+          <circle cx="1210" cy="150" r="46" fill="#E8EEF5"/><circle cx="1210" cy="150" r="120" fill="#C9D6E8" opacity=".08"/>
+          <g fill="none" stroke="#2457A0" stroke-opacity=".55" stroke-width="20" transform="translate(800 640) scale(.62 .28) translate(-800 -540)">
+            <path d="M800 920 V860 H260 V140 H1340 V860 H900 V780 H1260 V220 H340 V780 H700 V700 H420 V300 H1180 V700 H900 V620 H1100 V380 H500 V620 H700 V540 H580 V460 H1020 V540 H900"/>
+          </g>
+          <path class="glow-pulse" d="M800 1000 C800 930 820 900 812 860 C806 830 760 828 700 830" fill="none" stroke="#E0A73E" stroke-width="4" filter="url(#glow)"/>
+          <rect width="1600" height="1000" filter="url(#grain)" fill="#000" opacity=".35"/>
+        </svg>
+        <div class="tt"><h3>The Labyrinth<br>of Daedalus</h3><p class="sub">Six inventions. Every one of them worked.</p><div class="acts"><span>Begin</span><span class="ghost">Sound on</span><span class="ghost">Sources</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="notes">
+    <li><b>Materials</b><p>MeshStandardMaterial, lapis-tinted plaster with the same 512 px noise map as A. Thread as a TubeGeometry with an emissive ochre MeshBasicMaterial. Fresco CanvasTextures painted in limestone, lapis, olive and black only.</p></li>
+    <li><b>Lighting</b><p>One cool DirectionalLight per chamber as the moon, one 1024 px shadow map, HemisphereLight fill in deep sea. Shafts are additive planes with a gradient alpha texture, depthWrite off, slow UV drift. No point lights except the red one in chamber III.</p></li>
+    <li><b>Post</b><p>FogExp2 in deep sea hides draw distance and low poly. Bloom tuned so the thread, the moon and the shafts glow; Vignette and Noise. Sits between A and B in cost.</p></li>
+  </ul>
+  <p class="risk"><em>Watch</em>Blue night can turn to murk on a dim laptop. Keep a floor on exposure and keep frescoes lit to at least moonlight level so every wall painting reads in one glance.</p>
+</section>
+
+<section class="final" id="pick">
+  <span class="eyebrow">Recommendation</span>
+  <h2>Build C, with A's plaster on the walls</h2>
+  <ul>
+    <li>It makes the locked colour rule physical. Everything is cold, so the ochre thread pulls you forward and the red Cost lines land like a wound. In A the torches compete with the ochre.</li>
+    <li>It is the closest to the brief's fresco preference that still survives no baked lighting: fog, one moon light and soft shafts flatter low-poly rooms, which A cannot do.</li>
+    <li>Each chamber can change only its light colour and fresco while sharing one material set: moonlit stone for I, II, IV, V; red point light for III, the Minotaur's empty chamber; a cold dawn in VI on the beach.</li>
+    <li>Borrow from B the hard-edged black outline on fresco figures and the meander band, so frescoes read instantly at laptop size.</li>
+  </ul>
+  <p class="q">Open questions for you: the title. copy.ts UI.title says "The Ledger of Daedalus", the brief says "The Labyrinth of Daedalus". These mocks use Labyrinth; one word to change. Also, copy.ts source lines use a range dash character in lines like 8.236-259; the mocks show hyphens. Tell the builder which to keep.</p>
+</section>
+</div>
+
+<script>
+(function () {
+  var ns = 'http://www.w3.org/2000/svg';
+  var wings = document.getElementById('wings');
+  if (wings) {
+    [-1, 1].forEach(function (side) {
+      var bar = document.createElementNS(ns, 'path');
+      bar.setAttribute('d', 'M800 628 L' + (800 + side * 230) + ' 596');
+      bar.setAttribute('stroke', '#2a2219'); bar.setAttribute('stroke-width', '6'); bar.setAttribute('fill', 'none');
+      wings.appendChild(bar);
+      for (var i = 0; i < 10; i++) {
+        var t = i / 9, x = 800 + side * (14 + 216 * t), y = 628 - 32 * t, L = 46 + i * 14, a = side * (14 + i * 3.2);
+        var f = document.createElementNS(ns, 'ellipse');
+        f.setAttribute('cx', x); f.setAttribute('cy', y + L / 2); f.setAttribute('rx', 10); f.setAttribute('ry', L / 2);
+        f.setAttribute('transform', 'rotate(' + a + ' ' + x + ' ' + y + ')');
+        f.setAttribute('fill', i % 2 ? '#B9C7D6' : '#DCE4EC'); f.setAttribute('stroke', '#10283A'); f.setAttribute('stroke-width', '1.6');
+        wings.appendChild(f);
+        var q = document.createElementNS(ns, 'line');
+        q.setAttribute('x1', x); q.setAttribute('y1', y); q.setAttribute('x2', x); q.setAttribute('y2', y + L * .9);
+        q.setAttribute('transform', 'rotate(' + a + ' ' + x + ' ' + y + ')'); q.setAttribute('stroke', '#10283A'); q.setAttribute('stroke-opacity', '.5'); q.setAttribute('stroke-width', '1.2');
+        wings.appendChild(q);
+        var w = document.createElementNS(ns, 'circle');
+        w.setAttribute('cx', x); w.setAttribute('cy', y); w.setAttribute('r', 3.4); w.setAttribute('fill', '#EFE9DA');
+        wings.appendChild(w);
+      }
+    });
+  }
+  var motes = document.getElementById('motes');
+  if (motes) {
+    var s = 7;
+    function rnd() { s = (s * 9301 + 49297) % 233280; return s / 233280; }
+    for (var k = 0; k < 46; k++) {
+      var ty = 340 + rnd() * 480, tx = 760 + (ty - 340) * 0.36 + rnd() * 160;
+      var c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', tx.toFixed(1)); c.setAttribute('cy', ty.toFixed(1)); c.setAttribute('r', (0.8 + rnd() * 2).toFixed(1));
+      c.setAttribute('opacity', (0.2 + rnd() * 0.55).toFixed(2)); c.setAttribute('class', 'mote');
+      c.style.animationDelay = (-rnd() * 9).toFixed(1) + 's';
+      motes.appendChild(c);
+    }
+  }
+})();
+</script>
