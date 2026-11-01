@@ -1,0 +1,3 @@
+{"mode": "product", "name": "daedalus-cams45", "stage": "grill", "deadline": null,
+ "approvals": {"gate1": null, "gate2": null, "gate3": null, "storyboard": null, "submit": null},
+ "branch": "build/daedalus-v2", "design_direction": null, "success_metric": "", "runs": []}

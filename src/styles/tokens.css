@@ -1,0 +1,18 @@
+:root {
+  --night: #0A121C;
+  --deep-sea: #10283A;
+  --lapis: #2457A0;
+  --ochre: #E0A73E;
+  --minoan-red: #B3372B;
+  --limestone: #E8E1D2;
+  --fresco-black: #15110E;
+  --olive: #6F7A4E;
+  --dim: #8A97A6;
+  /* darker shades of the same two hues, for ink on pale paper (contrast) */
+  --ochre-ink: #8A5A06;
+  --red-ink: #A32A1E;
+  --serif-display: 'Marcellus SC', 'Times New Roman', serif;
+  --serif: 'EB Garamond', Georgia, serif;
+  --hand: 'Caveat', cursive;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
