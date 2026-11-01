@@ -50,7 +50,9 @@ function Door({ box }: { box: Box }) {
   const body = useRef<THREE.Mesh>(null), seam = useRef<THREE.Mesh>(null);
   const lift = useRef(open ? LIFT : 0), was = useRef(open);
   const seamMat = useMemo(() => new THREE.MeshBasicMaterial({ color: new THREE.Color(LOOK.cost.color).multiplyScalar(2), toneMapped: false, transparent: true, opacity: 0 }), []);
-  const [w, d] = [box.max[0] - box.min[0], box.max[1] - box.min[1]];
+  // thinner than the wall so an open door inside the lintel does not z-fight it
+  const [bw, bd] = [box.max[0] - box.min[0], box.max[1] - box.min[1]];
+  const [w, d] = bw > bd ? [bw - 0.02, bd * 0.6] : [bw * 0.6, bd - 0.02];
   useEffect(() => { if (open && !was.current) sfx.gate(); was.current = open; }, [open]);
   useFrame((_, dt) => {
     const target = open ? LIFT : 0, fast = useStore.getState().settings.reducedMotion;
@@ -62,7 +64,7 @@ function Door({ box }: { box: Box }) {
   return (
     <group position={[(box.min[0] + box.max[0]) / 2, 0, (box.min[1] + box.max[1]) / 2]}>
       <mesh ref={body} material={doorMat}><boxGeometry args={[w, DOOR_H, d]} /></mesh>
-      <mesh ref={seam} material={seamMat}><boxGeometry args={[w + 0.02, 0.05, d + 0.02]} /></mesh>
+      <mesh ref={seam} material={seamMat}><boxGeometry args={[w, 0.05, d]} /></mesh>
     </group>
   );
 }

@@ -13,7 +13,7 @@ export default function Thread() {
   const woven = useStore((s) => s.doors.includes('thread') || (s.current === 'thread' && s.step >= 2) || (!!s.current && ORDER.indexOf(s.current) > 3));
   const lit = useRef<PolyHandle>(null), litGlow = useRef<PolyHandle>(null), dim = useRef<PolyHandle>(null);
   useEffect(() => {
-    const i = AT_ROOM[Math.min(reach, ORDER.length - 1)];
+    const i = AT_ROOM[Math.min(reach, ORDER.length - 2)];
     // ponytail: the thread ends at the wings tower; the beach (VI) has none
     (woven ? litGlow : lit).current?.set(PTS.slice(0, i + 1));
     (woven ? lit : litGlow).current?.set([]);

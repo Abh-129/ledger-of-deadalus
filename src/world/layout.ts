@@ -147,7 +147,7 @@ export function blocked(p: V2, r: number, open: ChapterKey[]): boolean {
     if (dx * dx + dz * dz < r * r) return true;
   }
   const beach = ROOMS.partridge;
-  return roomAt(p) === 'partridge' && Math.hypot(p[0] - beach.center[0], p[1] - beach.center[1]) > beach.size[0] / 2 - r;
+  return p[0] > 100 && Math.hypot(p[0] - beach.center[0], p[1] - beach.center[1]) > beach.size[0] / 2 - r;
 }
 
 export function threadIndexNear(p: V2): number {
