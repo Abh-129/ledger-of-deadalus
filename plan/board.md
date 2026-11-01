@@ -10,3 +10,6 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [18:17] main: GATE 1+2 passed ("Yes, approve C"). Direction C. R1 dashes, R2 plaster, due date still open.
 - [18:21] main: conductor check G5: REFUTED reviewer claim 'sfx.breath does not exist' (sounds.ts:80 has breath, swell, quiet); plan.md sound list corrected. Rest PASS. Awaiting GATE 3.
 - [18:24] main: GATE 3 passed ("I give you permission to build."). Builders Sonnet, reviewers Opus medium. All builders read plan/builder-rules.md. Starting T1.
+- [18:28] lane-0/T1: done_with_concerns @ 7d49144 (build+check green, zero console errors) | @main rule on player teleport wiring
+- [18:29] main RULING T1-c2: store.ts stays untouched; T3's src/world/player.ts subscribes to the store (useStore.subscribe) and teleports on begin/reset (SPAWN), endFlight (BEACH_SPAWN) and spawns at entryOf(AT). RULING T1-c1: Flight.tsx endFlight wiring is T11's. RULING T1-c4: T19 drops the duplicate FinalBalance button. Commit trailer: builder-rules trailer is required on future commits.
+- [18:33] main: T1 fix round eebe3d4 verified by main (3 one-line fixes present, check green) -> T1 DONE. Starting T2.

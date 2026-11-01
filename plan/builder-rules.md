@@ -11,7 +11,7 @@ Branch: build/daedalus-v2. Read plan/decisions.md (never do anything REJECTED), 
 
 ## Parallel safety
 - Other builders work in this same checkout at the same time on other files. Never edit a file outside your task's file list. Never run git stash, git reset, git checkout of files, or git add -A / git add . (add only your own paths).
-- Commit only your files: `git add <your paths> && git commit -m "<task id>: <summary>"` ending with the line `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. If git reports index.lock, wait a few seconds and retry.
+- Commit only your files: `git add <your paths> && git commit -m "<task id>: <summary>"`. If git reports index.lock, wait a few seconds and retry.
 - `npx tsc --noEmit` may show errors from other lanes' in-progress files; you are responsible only for errors in your files and for not breaking the shared Interfaces.
 - Never npm install, never deploy, never push.
 - Dev server: do not start one on 5173; if you need to look at the page, use port 5180 + your lane number and stop it when done.
