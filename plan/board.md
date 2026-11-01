@@ -15,3 +15,5 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [18:33] main: T1 fix round eebe3d4 verified by main (3 one-line fixes present, check green) -> T1 DONE. Starting T2.
 - [18:42] lane-0/T2: done_with_concerns @ 8eccd52 (thread 107 m, plan/shots/t2-cow.png) | @T3 delete TempCamera in World.tsx
 - [18:43] main: conductor check T2 shot: geometry and thread read correctly; scene far too dark (expected until T5). RULING: no commit trailer required (builder-rules has none). Launching T2 review and T4 in parallel; T3 after the T2 verdict (T3 edits World.tsx).
+- [18:47] lane-0/T4: done @ 446915b (Fresco.tsx, build green, plan/shots/t4-fresco.png) | @T5 adjust plaster blotch alpha if walls look grey under moon; @reviewer check figure legibility at 4 m
+- [18:47] main: conductor check T4 shot: plaster, cracks, meander border read as fresco (good); figures look childlike (stick arms, boxy kilts). @T5 refine figure(): taller Minoan proportions, curved limbs, almond eye, flowing curls, thinner outline; keep ochre/red out.
