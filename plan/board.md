@@ -19,3 +19,4 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [18:47] main: conductor check T4 shot: plaster, cracks, meander border read as fresco (good); figures look childlike (stick arms, boxy kilts). @T5 refine figure(): taller Minoan proportions, curved limbs, almond eye, flowing curls, thinner outline; keep ochre/red out.
 - [18:48] reviewer T2: FIX (M2 L1): door z-fight, beach bound leak, thread clamp. Sent to lane-0 builder.
 - [18:48] main RULING: keep corridor LAMPS and hall COLUMNS. ALL LANES: keep every light mounted for the whole chamber and animate intensity only (changing light count recompiles all materials and stalls a frame).
+- [18:49] main: T2 fix 446327e verified by main (3 fixes present, check green) -> T2 DONE. Starting T3.
