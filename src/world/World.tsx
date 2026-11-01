@@ -1,12 +1,13 @@
 import { memo, useEffect, useMemo, useRef } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { sfx } from '../audio/sounds';
 import { LOOK, SkyDome } from '../experience/shared/look';
-import { AT, chapterCopy, ORDER, useStore } from '../store';
+import { chapterCopy, ORDER, useStore } from '../store';
+import Walker from './Walker';
 import Thread from './Thread';
 import { CHAMBERS } from './chambers';
-import { Box, BOXES, COLUMNS, CORR_H, DOOR_H, DOOR_W, entryOf, FLOORS, GAPS, ROOMS, SPAWN, WALL_T } from './layout';
+import { Box, BOXES, COLUMNS, CORR_H, DOOR_H, DOOR_W, FLOORS, GAPS, ROOMS, WALL_T } from './layout';
 
 const SLAB = 2.4; // metres per floor texture tile (2 x 2 flagstones)
 const LIFT = DOOR_H + 0.1;
@@ -108,16 +109,6 @@ const Static = memo(function Static() {
 // Cool moonlight in the hall and corridors (chambers bring their own key light).
 const LAMPS: [number, number, number][] = [[0, 3.8, 4.5], [4.5, 2.6, -17], [24.5, 2.6, -21], [30.5, 2.6, -22], [47, 2.6, -23]];
 
-// ponytail: temporary until T3's Player.tsx owns the camera; it just stands at the spawn (or at ?at=).
-function TempCamera() {
-  const camera = useThree((s) => s.camera);
-  useEffect(() => {
-    const at = AT && AT !== 'flight' && AT !== 'balance' ? entryOf(AT) : SPAWN;
-    camera.position.set(at.pos[0], 1.6, at.pos[1]); camera.rotation.set(0, at.yaw, 0);
-  }, [camera]);
-  return null;
-}
-
 export default function World() {
   const current = useStore((s) => s.current), step = useStore((s) => s.step);
   const written = useStore((s) => s.written), opened = useStore((s) => s.doors.length);
@@ -144,7 +135,7 @@ export default function World() {
           </group>
         );
       })}
-      <TempCamera />
+      <Walker />
     </>
   );
 }

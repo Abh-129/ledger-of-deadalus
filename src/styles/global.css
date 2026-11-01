@@ -49,6 +49,16 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .continue { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); }
 
+/* walk prompts */
+.follow { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); }
+.hint { position: fixed; top: 62px; left: 50%; transform: translateX(-50%); margin: 0; max-width: calc(100vw - 32px); text-align: center; color: var(--dim); text-shadow: 0 1px 8px #000; }
+.focus { position: fixed; left: 50%; top: 57%; transform: translateX(-50%); margin: 0; text-shadow: 0 1px 10px #000; }
+.focus b { color: var(--dim); font-weight: 400; margin-left: 8px; }
+.reticle { position: fixed; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: rgba(232, 225, 210, 0.55); }
+.resume { border: 0; color: inherit; cursor: pointer; width: 100%; }
+.resume span { font-family: var(--serif-display); letter-spacing: 0.08em; font-size: clamp(26px, 4vw, 44px); }
+@media (pointer: coarse) { .reticle { display: none; } }
+
 /* top-right controls */
 .top-right { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; }
 .gear { width: 40px; height: 40px; background: rgba(10, 18, 28, 0.7); border: 1px solid rgba(232, 225, 210, 0.3); font-size: 18px; line-height: 1; }

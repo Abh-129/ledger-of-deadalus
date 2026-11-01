@@ -6,6 +6,7 @@ import Captions from './Captions';
 import { FinalBalance, SourcesPage } from './FinalBalance';
 import Hud from './Hud';
 import Ledger from './Ledger';
+import Prompt from './Prompt';
 import Settings from './Settings';
 
 const BED: Record<string, string> = { title: 'sea', saw: 'wind', cow: 'workshop', labyrinth: 'drip', thread: 'drip', wings: 'wind', partridge: 'dawn', flight: 'wind', balance: 'dawn' };
@@ -20,18 +21,12 @@ function Title() {
       </h1>
       <p className="sub">{UI.subtitle}</p>
       <div className="row">
-        <button className="btn" onClick={begin} autoFocus>{UI.begin}</button>
+        <button id="begin" className="btn" onClick={begin} autoFocus>{UI.begin}</button>
         <button className="btn ghost" aria-pressed={settings.sound} onClick={() => setSetting('sound', !settings.sound)}>{settings.sound ? UI.soundOff : UI.soundOn}</button>
         <button className="link" onClick={() => set({ showSources: true })}>{UI.sources}</button>
       </div>
     </div>
   );
-}
-
-function Continue() {
-  const { mode, current, advance } = useStore();
-  if (mode !== 'walk' || !current) return null;
-  return <button className="btn continue" onClick={advance}>{UI.cont}</button>;
 }
 
 export default function Overlay() {
@@ -63,7 +58,7 @@ export default function Overlay() {
       <div id="ui">
         {mode === 'title' && <Title />}
         {playing && <Captions />}
-        {playing && <Continue />}
+        <Prompt />
         {playing && <Ledger />}
         <Hud />
         {mode === 'balance' && <FinalBalance />}
