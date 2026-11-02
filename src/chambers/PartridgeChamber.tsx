@@ -5,6 +5,7 @@ import { sfx } from '../audio/sounds';
 import { COL, GLOW, GRAD, LOOK, Prim } from '../experience/shared/look';
 import { Partridge, Person } from '../experience/shared/figures';
 import { Sea } from '../experience/shared/sea';
+import { Fresco, figure, type Paint } from '../world/Fresco';
 import { Hotspot } from '../world/interact';
 import { useStore } from '../store';
 import type { ChamberProps } from '../world/chambers';
@@ -15,6 +16,21 @@ const SEA_Y = 0.1, SAND_Y = 0.15;
 const FEATHERS = Array.from({ length: 14 }, (_, i) => [-6 + i * 0.9 + (i % 3) * 0.3, -1.5 - ((i * 7) % 6) * 1.2, i * 1.7] as const);
 const GRASS = Array.from({ length: 14 }, (_, i) => [5 + (i % 7) * 0.45 - 1.4, ((i * 5) % 4) * 0.2 - 1.2 + (i > 6 ? 1.5 : 0)] as const);
 const STONES = Array.from({ length: 10 }, (_, i) => [(i - 4.5) * 0.19, ((i * 3) % 4) * 0.08 - 0.12, 0.05 + (i % 3) * 0.04] as const);
+// The one fresco outdoors: a father carries his son's body; later the same father, arms raised.
+const slabPaint = (pose: 'carry' | 'raise'): Paint => (g, w, h) => {
+  const F = LOOK.fresco, u = h / 100, fx = w * 0.4, fy = h * 0.92;
+  g.fillStyle = F.blue; g.fillRect(0, h * 0.18, w, h * 0.05); // sea line
+  g.fillStyle = F.earth; g.fillRect(0, fy, w, h - fy);
+  g.fillStyle = F.skinPale; g.beginPath(); g.arc(w * 0.82, h * 0.2, w * 0.1, 0, 6.28); g.fill(); g.strokeStyle = F.line; g.lineWidth = 3; g.stroke(); // rising sun
+  figure(g, { x: fx, y: fy, h: 80 * u, facing: 1, pose, fill: F.skin });
+  if (pose !== 'carry') return;
+  const bx = fx + 9 * u, by = fy - 52 * u; // the son lies across his arms, head to the left, feet hanging
+  g.save(); g.translate(bx, by); g.fillStyle = F.skinPale; g.strokeStyle = F.line; g.lineWidth = 3;
+  g.beginPath(); g.ellipse(0, 0, 17 * u, 3.8 * u, -0.08, 0, 6.28); g.fill(); g.stroke();
+  g.beginPath(); g.ellipse(-19 * u, 1.5 * u, 3.4 * u, 3 * u, 0, 0, 6.28); g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(15 * u, 1 * u); g.lineTo(26 * u, 6 * u); g.lineWidth = 6; g.stroke(); g.strokeStyle = F.skinPale; g.lineWidth = 3.5; g.stroke();
+  g.restore();
+};
 const use = () => useStore.getState().advance();
 
 export default function PartridgeChamber({ step, state }: ChamberProps) {
@@ -22,6 +38,7 @@ export default function PartridgeChamber({ step, state }: ChamberProps) {
   const feathers = useRef<THREE.Group>(null), mound = useRef<THREE.Group>(null), stones = useRef<THREE.Group>(null);
   const man = useRef<THREE.Group>(null), pop = useRef<THREE.Group>(null), bow = useRef<THREE.Group>(null), bird = useRef<THREE.Group>(null);
   const sun = useRef<THREE.Mesh>(null), key = useRef<THREE.DirectionalLight>(null);
+  const aim = useMemo(() => new THREE.Object3D(), []); // the key aims at the chamber, not at the world origin
   const a = useRef({ bird: 0, walk: 0, mound: 0, stones: 0, bow: 0, dawn: 0 }).current;
   const glow = useMemo(() => new THREE.MeshBasicMaterial({ color: GLOW.clone(), toneMapped: false }), []);
   const dim = useMemo(() => new THREE.Color(COL.dim), []);
@@ -50,16 +67,15 @@ export default function PartridgeChamber({ step, state }: ChamberProps) {
     if (bird.current) bird.current.userData.flap = s >= 3 ? 1 : 0; // beats its wings, never rises
     glow.color.copy(GLOW).lerp(dim, THREE.MathUtils.smoothstep(a.stones, 0.1, 0.9));
     if (sun.current) sun.current.position.y = 2 + a.dawn * 20;
-    if (key.current) key.current.intensity = 1 + a.dawn * 2.2;
+    if (key.current) key.current.intensity = LOOK.dawn.key.min + LOOK.dawn.key.range * a.dawn;
   });
 
   if (state === 'ahead') return <></>; // World mounts neighbours early; keep the dawn fog out of the wings tower
   return (
     <>
-      <color attach="background" args={[LOOK.sky.dawn[1]]} />
-      <fogExp2 attach="fog" args={[LOOK.sky.dawn[1], 0.012]} />
-      <directionalLight ref={key} position={[0, 6, -40]} color={LOOK.fresco.plaster} intensity={0.6} />
-      <hemisphereLight args={[LOOK.sky.dawn[2], LOOK.fresco.earth, 1.3]} />
+      <primitive object={aim} />
+      <directionalLight ref={key} target={aim} position={[0, 6, -40]} color={LOOK.dawn.key.color} intensity={LOOK.dawn.key.min} />
+      <hemisphereLight args={[LOOK.dawn.hemi.sky, LOOK.dawn.hemi.ground, LOOK.dawn.hemi.intensity]} />
       <mesh ref={sun} position={[0, 2, -150]} frustumCulled={false}>
         <sphereGeometry args={[5, 16, 12]} /><meshBasicMaterial color={new THREE.Color(LOOK.fresco.plaster).multiplyScalar(2)} toneMapped={false} fog={false} />
       </mesh>
@@ -71,6 +87,11 @@ export default function PartridgeChamber({ step, state }: ChamberProps) {
       <mesh rotation-x={-Math.PI / 2} position={[0, SAND_Y + 0.005, 10]} scale={[1.15, 1, 1]}>
         <ringGeometry args={[9, 10.5, 36]} /><meshToonMaterial color={LOOK.fresco.earth} gradientMap={GRAD} />
       </mesh>
+      {/* the slab: faces the spawn point */}
+      <group position={[-2.9, SAND_Y, 6.3]} rotation-y={0.2}>
+        <Prim shape="box" args={[2.7, 3.5, 0.2]} pos={[0, 1.75, 0]} color={LOOK.fresco.earth} />
+        {step >= 1 && <Fresco paint={slabPaint(step >= 2 ? 'raise' : 'carry')} size={[2.5, 3.3]} pos={[0, 1.75, 0.11]} border="none" version={step >= 2 ? 1 : 0} />}
+      </group>
       <group ref={feathers}>
         {FEATHERS.map(([x, z, r], i) => (
           <mesh key={i} position={[x, SEA_Y, z]} rotation={[0, r, 0]} scale={[1.1, 0.03, 0.28]}>
