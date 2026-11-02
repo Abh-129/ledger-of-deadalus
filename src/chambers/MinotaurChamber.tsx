@@ -14,6 +14,7 @@ const [W, D] = ROOMS.labyrinth.size, H = ROOMS.labyrinth.height;
 const PLINTH_Z = -1.2, IN = 0.23; // IN: fresco inset from the room centre line (walls are 0.4 thick, inner face at 0.2)
 // Seven and seven: two rows on the plinth top (y = 0.75).
 const FIGS = Array.from({ length: 14 }, (_, i) => ({ x: ((i % 7) - 3) * 0.3, z: PLINTH_Z + (i < 7 ? -0.18 : 0.18) }));
+const BALL = new THREE.Color(COL.ochre).multiplyScalar(0.3).getStyle();
 const OFF = new THREE.Color(COL.dim).multiplyScalar(0.35), ON = RED_GLOW;
 
 // Two rows of seven walking toward the exit; red once the tribute is named (step >= 2).
@@ -79,8 +80,8 @@ export default function MinotaurChamber({ step, state }: ChamberProps) {
           <mesh position={[0, 0.17, 0]}><sphereGeometry args={[0.035, 8, 6]} /><meshBasicMaterial color={COL.dim} toneMapped={false} /></mesh>
         </group>
       ))}
-      <group position={[0, 0.3, 0]} visible={step >= 3}>
-        <Prim shape="sphere" args={[0.3, 14, 10]} glow />
+      <group position={[1.1, 0.18, -0.2]} visible={step >= 3}>
+        <Prim shape="sphere" args={[0.18, 14, 10]} color={COL.ochre} emissive={BALL} />
       </group>
       {/* the meander key: two bands round all four walls, a column in each corner */}
       {bands.flatMap(([x, z, ry], w) => [3.9, H - 1.2].map((y) => (
