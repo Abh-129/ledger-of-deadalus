@@ -8,7 +8,7 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T2: done 8eccd52..446327e (Lane 0: layout, World, doors, thread, registry, stubs)
 - T3: done_with_concerns 028dd9e (review verdict not recorded; re-checked in the cloud session wave 1) (Lane 0: player, hotspots, prompt, auto walk)
 - T4: done 446915b..16e4fb6 (Lane 0: Fresco kit, LOOK tokens)
-- T5: not started (Lane 0: apply design direction; waits for Gate 2)
+- T5: done_with_concerns 62da298 (Low and room II far wall not measured; figure() refinement moved to T7 by ruling R4)
 - T6: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane A: Saw build)
 - T7: not started (Lane A: Saw frescoes and light; feeds Gate 3)
 - T8: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane B: Cow build)
@@ -35,3 +35,4 @@ Every decision made during the build that the plan did not settle, by Abhinav or
 - gate1: "yes to all" (Sun Nov 1 17:51:35 EST 2026)
 - gate2 (design direction): "Yes, approve C" (Sun Nov 1 18:17 EST 2026)
 - gate3: "I give you permission to build." (Sun Nov 1 18:23 EST 2026); Mon Nov 2: Abhinav said "Go ahead with the work that was written on the plan", so the look test shots go to him for sign off but do not block lanes B to F
+- Ruling R4 (main, Nov 2): Lane 0 is idle, so the T7 builder may also edit figure() in src/world/Fresco.tsx (proportions only: taller Minoan figure, curved limbs, almond eye, curls, thinner outline, per the 18:47 board note) before the other fresco lanes start.
