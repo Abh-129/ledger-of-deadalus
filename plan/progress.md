@@ -16,8 +16,8 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T10: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane C: Minotaur chamber build)
 - T11: done 2093ef1 (review PASS) (Lane E: flight rework)
 - T12: not started (Lane C: Minotaur chamber frescoes and light)
-- T13: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane D: Thread build)
-- T14: not started (Lane D: Thread frescoes and light)
+- T13: done; review fixes in b23fcaa
+- T14: done b23fcaa (map fresco small, 2.2x3 m beside the exit door)
 - T15: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane E: Wings build)
 - T16: not started (Lane E: Wings frescoes and light)
 - T17: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane F: Partridge build)
