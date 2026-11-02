@@ -20,8 +20,8 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T14: done b23fcaa (map fresco small, 2.2x3 m beside the exit door)
 - T15: done; review fixes in 2ad5aa5
 - T16: done 2ad5aa5 (sun-path fresco high; check on a real GPU in T19)
-- T17: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane F: Partridge build)
-- T18: not started (Lane F: Partridge fresco and light)
+- T17: done; review fixes in fa01d57
+- T18: done_with_concerns fa01d57 (sun x2 and Sea fog hardcoded; caption contrast on pale sand -> T19)
 - T19: not started (Lane Z: integration, full run, perf, fallback, leftovers)
 - T20: not started (Lane Z: release build, credits, claims)
 
