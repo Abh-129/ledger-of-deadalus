@@ -50,16 +50,17 @@ const bullPaint: Paint = (g, w, h) => {
   g.save(); g.translate(bx, by); g.scale(0.88 * k, 0.88 * k); // the white bull, in units of k, origin at the sea line, facing right
   const leg = (pts: number[][]) => { P(pts, 11, F.line); P(pts, 7.5, F.plaster); };
   leg([[-26, -28], [-27, 0]]); leg([[8, -28], [30, -22], [36, -34]]); // far hind leg, raised foreleg
-  g.fillStyle = F.plaster; g.beginPath(); g.moveTo(-40, -44); g.bezierCurveTo(-30, -58, -10, -66, 8, -68); // rump, back, shoulder hump
-  g.bezierCurveTo(24, -66, 34, -64, 44, -60); g.bezierCurveTo(52, -58, 60, -52, 64, -44); // heavy neck, brow
+  g.fillStyle = F.plaster; g.beginPath(); g.moveTo(-40, -44); g.bezierCurveTo(-30, -62, -10, -74, 8, -76); // rump, back, shoulder hump
+  g.bezierCurveTo(24, -74, 34, -66, 44, -60); g.bezierCurveTo(52, -58, 60, -52, 64, -44); // heavy neck, brow
   g.bezierCurveTo(67, -38, 63, -32, 57, -34); g.bezierCurveTo(50, -34, 46, -34, 42, -28); // blunt muzzle, jaw
-  g.bezierCurveTo(38, -16, 30, -12, 20, -16); g.lineTo(-24, -20); g.bezierCurveTo(-38, -24, -44, -34, -40, -44); // dewlap, belly
-  g.closePath(); g.fill(); P([[-40, -44], [-30, -58], [-10, -66], [8, -68], [34, -64], [60, -52], [64, -44], [58, -34], [44, -32], [34, -16], [20, -16], [-24, -20], [-40, -30], [-40, -44]], 2.4, F.line);
+  g.bezierCurveTo(38, -10, 30, -6, 20, -8); g.lineTo(-24, -14); g.bezierCurveTo(-38, -20, -44, -34, -40, -44); // dewlap, belly
+  g.closePath(); g.fill();
+  g.fillStyle = F.line; for (const [x, y, rx, ry] of [[-16, -42, 7, 5], [2, -56, 5, 4], [-30, -32, 5, 4], [18, -34, 4, 3]]) { g.beginPath(); g.ellipse(x, y, rx, ry, 0.3, 0, 6.3); g.fill(); } // dark patches
+  P([[-40, -44], [-30, -58], [-10, -74], [8, -76], [34, -66], [60, -52], [64, -44], [58, -34], [44, -32], [34, -10], [20, -8], [-24, -14], [-40, -30], [-40, -44]], 2.4, F.line);
   leg([[20, -18], [22, 0]]);
-  for (const [dx, dy, s] of [[0, 0, 1], [-5, -3, 0.8]]) { // lyre horns, curving out, up and inward
-    const hx = 46 + dx, hy = -62 + dy;
-    g.beginPath(); g.moveTo(hx, hy); g.bezierCurveTo(hx - 6 * s, hy - 22 * s, hx + 18 * s, hy - 34 * s, hx + 26 * s, hy - 20 * s);
-    g.lineCap = 'round'; g.strokeStyle = F.line; g.lineWidth = 10; g.stroke(); g.strokeStyle = F.plaster; g.lineWidth = 6; g.stroke();
+  for (const [x0, x1, x2] of [[44, 30, 28], [51, 60, 68]]) { // two lyre horns rising up and forward, one smooth arc each
+    g.beginPath(); g.moveTo(x0, -62); g.bezierCurveTo(x1, -72, x2 - 2, -82, x2, -96);
+    g.lineCap = 'round'; g.strokeStyle = F.line; g.lineWidth = 9; g.stroke(); g.strokeStyle = F.plaster; g.lineWidth = 5; g.stroke();
   }
   P([[-40, -44], [-52, -36], [-50, -12]], 2.2, F.line); // thin tail
   g.fillStyle = F.line; for (const [x, y, r] of [[52, -51, 1.8], [62, -40, 1.3]]) { g.beginPath(); g.arc(x, y, r, 0, 6.3); g.fill(); } // eye, nostril
