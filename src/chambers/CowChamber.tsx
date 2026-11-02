@@ -12,9 +12,9 @@ import { Fresco, figure, type Paint } from '../world/Fresco';
 import { Hotspot } from '../world/interact';
 
 type V3 = [number, number, number];
-const F = LOOK.fresco, SC = 0.7, WR = 0.28, DIST = 1.4, X0 = -2.2, Z0 = -3.8, Y0 = 0.25 + 0.94 * SC;
+const F = LOOK.fresco, SC = 0.82, WR = 0.28, DIST = 1.4, X0 = -2.2, Z0 = -3.8, Y0 = 0.25 + 0.94 * SC;
 const mat = (color: string) => new THREE.MeshStandardMaterial({ color, roughness: 0.88 });
-const wood = mat(F.earth), tyre = mat(F.line), hide = mat(F.skinPale), curtainMat = mat(LOOK.stone.ceiling);
+const wood = mat(F.earth), tyre = mat(F.line), hide = mat(F.skinPale), curtainMat = mat(LOOK.stone.ceiling), alc = mat(LOOK.stone.wall);
 
 // The cow in cow-local metres (head +z). part: 0 FRAME, 1 PANELS, 2 WHEELS, 3 HIDE; off = where it hangs before it is fitted.
 interface Piece { part: number; off: V3; g: THREE.BufferGeometry; m: THREE.Material; pos: V3; rot?: V3; sc?: V3; thr?: number; wheel?: boolean }
@@ -45,29 +45,38 @@ const Plank = ({ a, p, m = wood, r }: { a: V3; p: V3; m?: THREE.Material; r?: V3
 const ln = (g: CanvasRenderingContext2D, w = 3) => { g.strokeStyle = F.line; g.lineWidth = w; g.lineJoin = 'round'; g.stroke(); };
 const bullPaint: Paint = (g, w, h) => {
   g.fillStyle = F.skinPale; g.fillRect(0, 0, w, h);
-  const k = h / 100, by = h * 0.8, bx = w * 0.44;
-  g.save(); g.translate(bx, by); g.scale(1.3, 1.3); g.translate(-bx, -by);
-  g.fillStyle = F.plaster; g.beginPath(); // the white bull, rearing out of the sea, facing right
-  g.moveTo(bx - 34 * k, by - 40 * k); g.bezierCurveTo(bx - 20 * k, by - 58 * k, bx + 8 * k, by - 56 * k, bx + 22 * k, by - 48 * k);
-  g.bezierCurveTo(bx + 30 * k, by - 62 * k, bx + 44 * k, by - 58 * k, bx + 52 * k, by - 50 * k); g.lineTo(bx + 60 * k, by - 44 * k);
-  g.lineTo(bx + 50 * k, by - 38 * k); g.bezierCurveTo(bx + 40 * k, by - 42 * k, bx + 30 * k, by - 28 * k, bx + 20 * k, by - 10 * k);
-  g.lineTo(bx - 30 * k, by - 6 * k); g.bezierCurveTo(bx - 38 * k, by - 20 * k, bx - 40 * k, by - 30 * k, bx - 34 * k, by - 40 * k);
-  g.fill(); ln(g, 3 * k);
-  g.beginPath(); g.arc(bx + 44 * k, by - 62 * k, 9 * k, Math.PI * 1.1, Math.PI * 1.9); ln(g, 3 * k); // horn
-  g.fillStyle = F.line; g.beginPath(); g.arc(bx + 50 * k, by - 50 * k, 1.2 * k, 0, 6.3); g.fill();
-  g.beginPath(); g.moveTo(bx - 34 * k, by - 40 * k); g.quadraticCurveTo(bx - 50 * k, by - 40 * k, bx - 46 * k, by - 18 * k); ln(g, 2.5 * k); // tail
+  const k = h / 100, by = h * 0.88, bx = w * 0.38;
+  const P = (pts: number[][], width: number, col: string) => { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.lineCap = 'round'; g.strokeStyle = col; g.lineWidth = width; g.stroke(); };
+  g.save(); g.translate(bx, by); g.scale(0.88 * k, 0.88 * k); // the white bull, in units of k, origin at the sea line, facing right
+  const leg = (pts: number[][]) => { P(pts, 11, F.line); P(pts, 7.5, F.plaster); };
+  leg([[-26, -28], [-27, 0]]); leg([[8, -28], [30, -22], [36, -34]]); // far hind leg, raised foreleg
+  g.fillStyle = F.plaster; g.beginPath(); g.moveTo(-40, -44); g.bezierCurveTo(-30, -58, -10, -66, 8, -68); // rump, back, shoulder hump
+  g.bezierCurveTo(24, -66, 34, -64, 44, -60); g.bezierCurveTo(52, -58, 60, -52, 64, -44); // heavy neck, brow
+  g.bezierCurveTo(67, -38, 63, -32, 57, -34); g.bezierCurveTo(50, -34, 46, -34, 42, -28); // blunt muzzle, jaw
+  g.bezierCurveTo(38, -16, 30, -12, 20, -16); g.lineTo(-24, -20); g.bezierCurveTo(-38, -24, -44, -34, -40, -44); // dewlap, belly
+  g.closePath(); g.fill(); P([[-40, -44], [-30, -58], [-10, -66], [8, -68], [34, -64], [60, -52], [64, -44], [58, -34], [44, -32], [34, -16], [20, -16], [-24, -20], [-40, -30], [-40, -44]], 2.4, F.line);
+  leg([[20, -18], [22, 0]]);
+  for (const [dx, dy, s] of [[0, 0, 1], [-5, -3, 0.8]]) { // lyre horns, curving out, up and inward
+    const hx = 46 + dx, hy = -62 + dy;
+    g.beginPath(); g.moveTo(hx, hy); g.bezierCurveTo(hx - 6 * s, hy - 22 * s, hx + 18 * s, hy - 34 * s, hx + 26 * s, hy - 20 * s);
+    g.lineCap = 'round'; g.strokeStyle = F.line; g.lineWidth = 10; g.stroke(); g.strokeStyle = F.plaster; g.lineWidth = 6; g.stroke();
+  }
+  P([[-40, -44], [-52, -36], [-50, -12]], 2.2, F.line); // thin tail
+  g.fillStyle = F.line; for (const [x, y, r] of [[52, -51, 1.8], [62, -40, 1.3]]) { g.beginPath(); g.arc(x, y, r, 0, 6.3); g.fill(); } // eye, nostril
   g.restore();
   g.fillStyle = F.sea; g.beginPath(); g.moveTo(0, h); g.lineTo(0, by - 4 * k); // the lapis sea band, waves over the legs
   for (let x = 0; x <= w; x += 9 * k) g.quadraticCurveTo(x + 4.5 * k, by - 12 * k, x + 9 * k, by - 4 * k);
   g.lineTo(w, h); g.closePath(); g.fill(); ln(g, 2 * k);
   g.strokeStyle = F.blue; g.lineWidth = 2.4 * k;
   for (let r = 0; r < 2; r++) for (let x = (r % 2) * 7 * k; x < w; x += 14 * k) { g.beginPath(); g.arc(x, by + (7 + r * 7) * k, 5 * k, Math.PI, 0); g.stroke(); }
-  g.fillStyle = F.earth; g.beginPath(); g.rect(w * 0.1, by - 22 * k, 20 * k, 20 * k); g.fill(); ln(g, 2.5 * k); // altar with horns of consecration
-  for (const dx of [0, 14]) { g.beginPath(); g.moveTo(w * 0.1 + dx * k, by - 22 * k); g.lineTo(w * 0.1 + (dx + 3) * k, by - 31 * k); g.lineTo(w * 0.1 + (dx + 6) * k, by - 22 * k); g.fill(); ln(g, 2.5 * k); }
-  const mx = w * 0.8, my = h * 0.94, mh = 78 * k;
-  figure(g, { x: mx, y: my, h: mh, facing: -1, pose: 'reach', fill: F.skin }); // Minos leads
+  g.fillStyle = F.earth; for (const x of [w * 0.1, w * 0.74]) { g.beginPath(); g.ellipse(x, h * 0.96, 26 * k, 7 * k, 0, 0, 6.3); g.fill(); ln(g, 2.2 * k); } // shore islets
+  const ax = w * 0.1, ay = h * 0.945, steps: [number, number, string][] = [[34, 11, F.earth], [26, 11, F.skin], [18, 8, F.earth]]; // stepped altar, horns of consecration on top
+  let top = ay; for (const [bw, bh, col] of steps) { g.fillStyle = col; g.beginPath(); g.rect(ax - bw * k / 2, top - bh * k, bw * k, bh * k); g.fill(); ln(g, 2.2 * k); top -= bh * k; }
+  for (const s of [-1, 1]) { g.beginPath(); g.moveTo(ax + s * 3 * k, top); g.bezierCurveTo(ax + s * 4 * k, top - 8 * k, ax + s * 10 * k, top - 10 * k, ax + s * 13 * k, top - 18 * k); g.lineTo(ax + s * 17 * k, top - 18 * k); g.bezierCurveTo(ax + s * 16 * k, top - 8 * k, ax + s * 12 * k, top - 2 * k, ax + s * 9 * k, top); g.closePath(); g.fillStyle = F.plaster; g.fill(); ln(g, 2.2 * k); }
+  const mx = w * 0.7, my = h * 0.97, mh = 95 * k;
+  figure(g, { x: mx, y: my, h: mh, facing: -1, pose: 'reach', fill: F.skin }); // Minos reaches toward the bull
   g.fillStyle = F.earth; g.beginPath(); const hx = mx - 3 * mh / 100, hy = my - 87 * mh / 100; // crown
-  g.moveTo(hx - 6 * k, hy); for (let i = 0; i < 4; i++) { g.lineTo(hx - 6 * k + i * 4 * k + 2 * k, hy - 9 * k); g.lineTo(hx - 6 * k + (i + 1) * 4 * k, hy); } g.closePath(); g.fill(); ln(g, 2 * k);
+  g.moveTo(hx - 6 * k, hy); for (let i = 0; i < 4; i++) { g.lineTo(hx - 6 * k + i * 3.5 * k + 1.7 * k, hy - 8 * k); g.lineTo(hx - 6 * k + (i + 1) * 3.5 * k, hy); } g.closePath(); g.fill(); ln(g, 2 * k);
 };
 const queenPaint: Paint = (g, w, h) => {
   g.fillStyle = F.skinPale; g.fillRect(0, 0, w, h);
@@ -149,9 +158,8 @@ export default function CowChamber({ step, state }: ChamberProps) {
 
       {/* raised platform, the alcove at its west end, and the curtain that drops when the cow is inside */}
       <Plank a={[4, 0.25, 2.6]} p={[-3, 0.125, Z0]} />
-      <Plank a={[0.1, 2.6, 2.4]} p={[-4.85, 1.55, Z0]} m={tyre} />
-      <Plank a={[2.4, 2.6, 0.1]} p={[-3.65, 1.55, -5]} m={tyre} />{/* open toward +Z so the entry sees the cow inside */}
-      <Plank a={[2.4, 0.1, 2.5]} p={[-3.65, 2.9, Z0]} m={tyre} />
+      <Plank a={[0.1, 2.6, 2.4]} p={[-4.85, 1.55, Z0]} m={alc} />
+      <Plank a={[2.4, 2.6, 0.1]} p={[-3.65, 1.55, -5]} m={alc} />{/* open toward +Z so the entry sees the cow inside */}
       <mesh ref={curtain} position={[-2.45, 2.6, Z0]} visible={false} material={curtainMat}><boxGeometry args={[0.06, 2.6, 2.4]} /></mesh>
       <Hotspot pos={[-2.35, 1.3, Z0]} enabled={on(4)} onUse={adv} radius={4.5} />
 
