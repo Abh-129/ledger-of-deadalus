@@ -44,3 +44,4 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [Nov 2] lane-B/T9: done @ 74d847c | main: conductor check PASS (cow-hero: horned spotted bull, open alcove, cow on wheels with ochre edges). All twelve chamber tasks done. T19 running.
 - [Nov 2] main: R5 walk speed 2.2 -> 4.4 m/s (Shift 6.5) in Walker.tsx per Abhinav; @T19 B-RUN uses the new speed.
 - [Nov 2] main: dropped both [CONFIRM] marks in writeup.md and the .docx (every chamber has fresco walls; flight playable, B-FLIGHT outcomes checked by reviewers).
+- [Nov 2] main: perf: Experience.tsx store selectors (no full re-render on store change), dpr cap 1.5 -> 1.25 at High, N8AO quality performance. Real fps still to be measured on Abhinav's laptop.
