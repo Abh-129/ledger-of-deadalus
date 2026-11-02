@@ -65,7 +65,6 @@ export default function Overlay() {
         <Settings />
         {showSources && <SourcesPage />}
       </div>
-      <div id="fx-black" /><div id="fx-flash" />
     </>
   );
 }

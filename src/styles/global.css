@@ -3,7 +3,6 @@ html, body, #root { margin: 0; height: 100%; background: var(--night); color: va
 body { font-family: var(--serif); overflow: hidden; -webkit-font-smoothing: antialiased; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; font-variant-numeric: tabular-nums; }
 
 #stage { position: fixed; inset: 0; }
@@ -11,9 +10,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #ui { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
 #ui > * { pointer-events: auto; }
 #ui .nopointer { pointer-events: none; }
-#fx-black, #fx-flash { position: fixed; inset: 0; pointer-events: none; opacity: 0; }
-#fx-black { z-index: 20; background: var(--night); }
-#fx-flash { z-index: 21; }
 
 /* buttons */
 .btn {
@@ -125,7 +121,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sources-page article { max-width: 62ch; display: grid; gap: 14px; font-size: 20px; line-height: 1.6; }
 .sources-page h2 { font-family: var(--serif-display); font-weight: 400; letter-spacing: 0.06em; font-size: 38px; margin: 0; }
 .sources-page ul { margin: 0; padding-left: 20px; color: var(--dim); }
-.loading { position: fixed; inset: 0; display: grid; place-items: center; color: var(--dim); }
 
 /* static no-WebGL fallback */
 .fallback { position: static; overflow: auto; height: 100%; padding: 40px 16px 80px; display: grid; justify-items: center; }

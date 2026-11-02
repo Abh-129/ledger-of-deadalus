@@ -4,12 +4,14 @@
 - Ovid, *Metamorphoses* 8.131-259
 - Apollodorus, *Library* 3.1.3-4 and 3.15.8; *Epitome* 1.7-15
 
-**Code** (all MIT): three.js, @react-three/fiber, @react-three/drei, @react-three/postprocessing, React, Vite, zustand.
+**Code** (all MIT): three.js, @react-three/fiber, @react-three/drei, @react-three/postprocessing, React, React DOM, zustand, Vite, @vitejs/plugin-react, TypeScript.
 
 **Fonts** (SIL Open Font License, loaded from Google Fonts): Marcellus SC, EB Garamond, Caveat, IBM Plex Mono.
 
-**3D assets:** none. Every model is built procedurally in code.
+**Art:** all geometry and all frescoes are drawn in code (procedural meshes and canvas drawing). There are no image, model or texture files.
 
-**Audio:** none. All sound (ambient beds, lyre pluck, bellow, impacts) is synthesized live with the Web Audio API, so there are no third-party audio files and no licences to track. Sound is muted until the visitor opts in.
+**Audio:** all sound is synthesized live in the browser with the Web Audio API. There are no audio files and no licences to track. Sound is muted until the visitor opts in.
+
+No third-party asset files are shipped: the repository has no public/ folder.
 
 Built by Abhinav for CAMS 45.

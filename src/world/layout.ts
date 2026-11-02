@@ -7,7 +7,7 @@ import type { ChapterKey } from '../content/copy';
 
 export type V2 = [number, number];
 export interface Box { min: V2; max: V2; door?: ChapterKey; seal?: true; h?: number; post?: true } // h: wall height, default CORR_H; post: a column (collision only, World draws it)
-export interface Room {
+interface Room {
   key: ChapterKey;
   center: V2; size: V2;        // size in the room's local frame: [width x, depth z]
   height: number;
@@ -54,7 +54,7 @@ export const THREAD: V2[] = [
 
 // Four pillars in the hall: a Minoan colonnade beside the thread.
 export const COLUMNS: V2[] = [[-2.8, 2.5], [2.8, 2.5], [-2.8, 5.5], [2.8, 5.5]];
-export const COLUMN_R = 0.3;
+const COLUMN_R = 0.3;
 
 // Everything below is generated from the hand-laid points above.
 type Rect = [number, number, number, number]; // x0 z0 x1 z1

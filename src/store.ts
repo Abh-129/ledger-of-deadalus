@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { CHAPTERS, ChapterCopy, ChapterKey, Roman } from './content/copy';
 
-export type Mode = 'title' | 'walk' | 'flight' | 'balance';
+type Mode = 'title' | 'walk' | 'flight' | 'balance';
 export const ORDER: ChapterKey[] = ['saw', 'cow', 'labyrinth', 'thread', 'wings', 'partridge'];
 
 export interface Settings { sound: boolean; quality: 'high' | 'low'; reducedMotion: boolean }
-export interface FlightResult { outcome: 'melt' | 'sea' | 'win' | 'skipped'; maxAltitude: number; glory: number }
+interface FlightResult { outcome: 'melt' | 'sea' | 'win' | 'skipped'; maxAltitude: number; glory: number }
 
 export const chapterCopy = (k: ChapterKey): ChapterCopy => CHAPTERS.find((c) => c.key === k)!;
 const KEY = 'ledger-of-daedalus.v2';

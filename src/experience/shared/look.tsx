@@ -11,7 +11,7 @@ export const LOOK = {
   stone: { wall: '#3A5F7E', floor: '#2F5472', ceiling: '#16273A', ambient: 0.9, hemiSky: '#C9D6E8', hemiGround: '#10283A', fog: '#10283A', fogDensity: 0.03, minAmbient: 0.85 },
   moon: { color: '#C9D6E8', intensity: 26, distance: 10 },
   craft: { color: COL.ochre, emissive: 2.2 },
-  cost: { color: '#D4584A', intensity: 26, distance: 10, shaft: { intensity: 80, distance: 16, angle: 0.5, penumbra: 0.6, attenuation: 9, anglePower: 5, opacity: 0.5 } },
+  cost: { color: '#D4584A', intensity: 26, distance: 10, shaft: { intensity: 160, distance: 16, angle: 0.5, penumbra: 0.6, attenuation: 9, anglePower: 5, opacity: 0.5 } },
   sun: { color: '#F4F8FF', intensity: 900, distance: 15, angle: 0.13, penumbra: 0.4, attenuation: 14, anglePower: 3, opacity: 0.55 },
   dawn: { key: { color: '#E8E1D2', min: 0.6, range: 2.2 }, hemi: { sky: '#e8c9a0', ground: '#8f7a5c', intensity: 1.3 } },
   sky: { day: ['#6f9fd6', '#a9c8e8', '#e8e1d2'] as [string, string, string], dawn: ['#16304a', '#8a97a6', '#e8c9a0'] as [string, string, string] },
@@ -28,7 +28,7 @@ export const GRAD = (() => {
 })();
 
 type Shape = 'box' | 'cyl' | 'sphere' | 'cone' | 'torus';
-export interface PrimProps {
+interface PrimProps {
   shape?: Shape; args?: number[]; color?: string; emissive?: string; glow?: boolean; outline?: boolean;
   pos?: [number, number, number]; rot?: [number, number, number]; scale?: [number, number, number] | number;
   wire?: boolean; opacity?: number; children?: React.ReactNode;

@@ -1,6 +1,6 @@
 // Flight model from the spec (section 8.2), in normalised altitude units: 0 = sea, 1 = sun.
 export const FLIGHT_SECONDS = 45;
-export const ZONES = { sea: 0.05, sprayTop: 0.25, midLo: 0.35, midHi: 0.65, heat: 0.75 };
+const ZONES = { sea: 0.05, sprayTop: 0.25, midLo: 0.35, midHi: 0.65, heat: 0.75 };
 
 export interface Flight {
   alt: number; vy: number; wax: number; spray: number; time: number; glory: number; maxAlt: number;
