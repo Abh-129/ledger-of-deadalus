@@ -6,7 +6,7 @@ Written by the main session after every gate, sprint and build run, so a compact
 Status is one of: done, done_with_concerns, parked, needs_context, skipped, not started.
 - T1: done 7d49144..eebe3d4 (Lane 0: store, copy keys, v1 deletions, check.ts)
 - T2: done 8eccd52..446327e (Lane 0: layout, World, doors, thread, registry, stubs)
-- T3: done_with_concerns 028dd9e (review verdict not recorded; re-checked in the cloud session wave 1) (Lane 0: player, hotspots, prompt, auto walk)
+- T3: done; review FIX findings fixed in L0-FIX c83dd36 (Enter preventDefault, focus label)
 - T4: done 446915b..16e4fb6 (Lane 0: Fresco kit, LOOK tokens)
 - T5: done_with_concerns 62da298 (Low and room II far wall not measured; figure() refinement moved to T7 by ruling R4)
 - T6: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane A: Saw build)
