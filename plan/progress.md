@@ -12,7 +12,7 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T6: done; review fixes in 4bfeb32
 - T7: done_with_concerns 4bfeb32 (fps not measurable headless; plaster grey-blue under moon)
 - T8: done; review fixes in dd610ba
-- T9: in fix round (bull fresco, alcove) after dd610ba
+- T9: done dd610ba..74d847c (bull fresco redone twice; reads as a horned spotted bull)
 - T10: done; review fixes in 81f1eac
 - T11: done 2093ef1 (review PASS) (Lane E: flight rework)
 - T12: done 81f1eac..3712eac (red shaft faint, LOOK.cost.shaft intensity for T19)
