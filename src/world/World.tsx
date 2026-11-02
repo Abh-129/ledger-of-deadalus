@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import { sfx } from '../audio/sounds';
 import { LOOK, SkyDome } from '../experience/shared/look';
 import { chapterCopy, ORDER, useStore } from '../store';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { friezeTexture } from './Fresco';
 import Walker from './Walker';
 import Thread from './Thread';
 import { CHAMBERS } from './chambers';
@@ -36,6 +38,24 @@ function wallGeo(b: Box) {
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3));
   return g;
+}
+
+// One merged mesh: a 0.5 m band at 2 m on both faces of every corridor wall (corridor walls are exactly the CORR_H boxes), one texture.
+function friezeGeo() {
+  const planes: THREE.BufferGeometry[] = [];
+  for (const b of BOXES) {
+    if (b.door || b.post || b.h !== CORR_H) continue;
+    const alongX = b.max[0] - b.min[0] > b.max[1] - b.min[1], len = alongX ? b.max[0] - b.min[0] : b.max[1] - b.min[1];
+    if (len < 1) continue;
+    for (const side of [-1, 1]) {
+      const g = new THREE.PlaneGeometry(len, 0.5), uv = g.attributes.uv, lo = alongX ? b.min[0] : b.min[1];
+      for (let i = 0; i < uv.count; i++) uv.setX(i, (lo + uv.getX(i) * len) / 2); // world-continuous, one tile per 2 m
+      if (alongX) { g.rotateY(side < 0 ? Math.PI : 0); g.translate((b.min[0] + b.max[0]) / 2, 2, side < 0 ? b.min[1] - 0.01 : b.max[1] + 0.01); }
+      else { g.rotateY(side < 0 ? -Math.PI / 2 : Math.PI / 2); g.translate(side < 0 ? b.min[0] - 0.01 : b.max[0] + 0.01, 2, (b.min[1] + b.max[1]) / 2); }
+      planes.push(g);
+    }
+  }
+  return mergeGeometries(planes)!;
 }
 
 function slabGeo(f: (typeof FLOORS)[number], uv: boolean) {
@@ -72,11 +92,13 @@ function Door({ box }: { box: Box }) {
 
 // Everything that never changes: walls, floors, ceilings, lintels, doors, hall columns, beach.
 const Static = memo(function Static() {
-  const walls = useMemo(() => BOXES.filter((b) => !b.door && !b.post).map((b) => ({ b, g: wallGeo(b) })), []);
+  const walls = useMemo(() => BOXES.filter((b) => !b.door && !b.post && !b.seal).map((b) => ({ b, g: wallGeo(b) })), []);
   const slabs = useMemo(() => FLOORS.map((f) => ({ f, floor: slabGeo(f, true), ceil: f.roof ? slabGeo(f, false) : null })), []);
   const beach = ROOMS.partridge;
+  const frieze = useMemo(() => ({ geo: friezeGeo(), mat: new THREE.MeshStandardMaterial({ map: friezeTexture(), color: '#9aa6b8', roughness: 0.9 }) }), []);
   return (
     <>
+      <mesh geometry={frieze.geo} material={frieze.mat} />
       {walls.map(({ b, g }, i) => (
         <mesh key={i} geometry={g} material={stone} position={[(b.min[0] + b.max[0]) / 2, (b.h ?? CORR_H) / 2, (b.min[1] + b.max[1]) / 2]} />
       ))}

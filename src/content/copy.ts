@@ -3,7 +3,7 @@
 export type Roman = 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI';
 export type ChapterKey = 'saw' | 'cow' | 'labyrinth' | 'thread' | 'wings' | 'partridge';
 
-export interface Caption { t: string; latin?: boolean; gloss?: string }
+interface Caption { t: string; latin?: boolean; gloss?: string }
 export interface ChapterCopy {
   id: Roman;
   key: ChapterKey;

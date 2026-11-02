@@ -7,7 +7,7 @@ import { updateFocus, useFocused } from './interact';
 import { blocked, EYE, roomAt } from './layout';
 import { follow, lock, player, route } from './player';
 
-const R = 0.3, WALK = 2.2, RUN = 3.5, PITCH = Math.PI / 3, LOOK_LOCKED = 0.0022, LOOK_DRAG = 0.004;
+const R = 0.3, WALK = 4.4, RUN = 6.5, PITCH = Math.PI / 3, LOOK_LOCKED = 0.0022, LOOK_DRAG = 0.004;
 const vel = { x: 0, z: 0 };
 let bob = 0, lastRoom: string | null = null, stuck = 0;
 
@@ -78,22 +78,22 @@ export default function Walker() {
       player.yaw += turn * 1.8 * dt;
       if (player.auto && route.length) { // steer along the route
         const dx = route[0][0] - player.pos.x, dz = route[0][1] - player.pos.z;
-        if (Math.hypot(dx, dz) < 0.25) { route.shift(); if (!route.length) player.auto = false; }
+        if (Math.hypot(dx, dz) < 0.4) { route.shift(); if (!route.length) player.auto = false; }
         else {
           const want = Math.atan2(-dx, -dz), diff = Math.atan2(Math.sin(want - player.yaw), Math.cos(want - player.yaw));
-          player.yaw += rm ? diff : diff * (1 - Math.exp(-dt * 4)); player.pitch *= 1 - Math.min(1, dt * 3);
+          player.yaw += rm ? diff : diff * (1 - Math.exp(-dt * 8)); player.pitch *= 1 - Math.min(1, dt * 3);
           f = Math.abs(diff) < 1.2 ? 1 : 0;
         }
       }
       const sp = k.has('ShiftLeft') || k.has('ShiftRight') ? RUN : WALK, s = Math.sin(player.yaw), c = Math.cos(player.yaw);
       const n = Math.hypot(f, r) || 1, a = rm ? 1 : 1 - Math.exp(-dt * 12); // ease the speed in and out
       vel.x += ((-s * f + c * r) / n * sp - vel.x) * a; vel.z += ((-c * f - s * r) / n * sp - vel.z) * a;
-      const p = player.pos, x0 = p.x, z0 = p.z;
-      if (!blocked([p.x + vel.x * dt, p.z], R, st.doors)) p.x += vel.x * dt; else vel.x = 0; // slide along walls, one axis at a time
-      if (!blocked([p.x, p.z + vel.z * dt], R, st.doors)) p.z += vel.z * dt; else vel.z = 0;
+      const p = player.pos, x0 = p.x, z0 = p.z, sealed = st.written.includes('IV');
+      if (!blocked([p.x + vel.x * dt, p.z], R, st.doors, sealed)) p.x += vel.x * dt; else vel.x = 0; // slide along walls, one axis at a time
+      if (!blocked([p.x, p.z + vel.z * dt], R, st.doors, sealed)) p.z += vel.z * dt; else vel.z = 0;
       const speed = Math.hypot(vel.x, vel.z);
       if (player.auto) { stuck = Math.hypot(p.x - x0, p.z - z0) < 0.2 * sp * dt ? stuck + dt : 0; if (stuck > 0.5) { player.auto = false; route.length = 0; } } else stuck = 0;
-      bob += speed * dt * 5;
+      bob += speed * dt * 2.5;
       const room = roomAt([p.x, p.z]);
       if (room !== lastRoom) { lastRoom = room; if (room) st.enter(room); }
       p.y = EYE + (rm ? 0 : Math.sin(bob) * 0.03 * Math.min(1, speed / WALK));

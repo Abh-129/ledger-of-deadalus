@@ -3,7 +3,7 @@ import { GAME, UI } from '../content/copy';
 import { LOOK } from '../experience/shared/look';
 import { live, useLive, useStore } from '../store';
 
-export const requestSkip = () => window.dispatchEvent(new Event('game-skip'));
+const requestSkip = () => window.dispatchEvent(new Event('game-skip'));
 
 export default function Hud() {
   const mode = useStore((s) => s.mode);

@@ -6,8 +6,8 @@
 import type { ChapterKey } from '../content/copy';
 
 export type V2 = [number, number];
-export interface Box { min: V2; max: V2; door?: ChapterKey; h?: number; post?: true } // h: wall height, default CORR_H; post: a column (collision only, World draws it)
-export interface Room {
+export interface Box { min: V2; max: V2; door?: ChapterKey; seal?: true; h?: number; post?: true } // h: wall height, default CORR_H; post: a column (collision only, World draws it)
+interface Room {
   key: ChapterKey;
   center: V2; size: V2;        // size in the room's local frame: [width x, depth z]
   height: number;
@@ -54,7 +54,7 @@ export const THREAD: V2[] = [
 
 // Four pillars in the hall: a Minoan colonnade beside the thread.
 export const COLUMNS: V2[] = [[-2.8, 2.5], [2.8, 2.5], [-2.8, 5.5], [2.8, 5.5]];
-export const COLUMN_R = 0.3;
+const COLUMN_R = 0.3;
 
 // Everything below is generated from the hand-laid points above.
 type Rect = [number, number, number, number]; // x0 z0 x1 z1
@@ -68,7 +68,7 @@ const rectOf = (r: Room): Rect => {
 };
 
 /** Four walls around a rect, with a DOOR_W gap at each point in `gaps` (a gap with `door` gets a closed door box). */
-function roomWalls(rc: Rect, gaps: { p: V2; door?: ChapterKey }[], h: number) {
+function roomWalls(rc: Rect, gaps: { p: V2; door?: ChapterKey; seal?: true }[], h: number) {
   const [x0, z0, x1, z1] = rc, T = WALL_T / 2, g = DOOR_W / 2;
   const edges: { ax: 'x' | 'z'; line: number; a: number; b: number }[] = [
     { ax: 'x', line: z0, a: x0, b: x1 }, { ax: 'x', line: z1, a: x0, b: x1 },
@@ -83,6 +83,7 @@ function roomWalls(rc: Rect, gaps: { p: V2; door?: ChapterKey }[], h: number) {
     for (const c of cuts) {
       BOXES.push({ ...slab(e.ax, e.line, from, c.p[i] - g), h });
       if (c.door) BOXES.push({ ...slab(e.ax, e.line, c.p[i] - g, c.p[i] + g), door: c.door, h: DOOR_H });
+      if (c.seal) BOXES.push({ ...slab(e.ax, e.line, c.p[i] - g, c.p[i] + g), seal: true, h: DOOR_H }); // invisible: blocks only once sealed
       GAPS.push({ pos: c.p, axis: e.ax, h });
       from = c.p[i] + g;
     }
@@ -119,7 +120,7 @@ const R = ROOMS;
 roomWalls(HALL, [{ p: HALL_EXIT }], HALL_H);
 FLOORS.push({ min: [HALL[0], HALL[1]], max: [HALL[2], HALL[3]], h: HALL_H, roof: true });
 for (const k of ['saw', 'cow', 'labyrinth', 'thread', 'wings'] as const) {
-  roomWalls(rectOf(R[k]), [{ p: edge(R[k], 1) }, { p: R[k].exit!, door: k }], R[k].height);
+  roomWalls(rectOf(R[k]), [{ p: edge(R[k], 1), seal: k === 'thread' || undefined }, { p: R[k].exit!, door: k }], R[k].height);
   const rc = rectOf(R[k]);
   FLOORS.push({ min: [rc[0], rc[1]], max: [rc[2], rc[3]], h: R[k].height, roof: k !== 'wings' });
 }
@@ -140,8 +141,9 @@ export function roomAt(p: V2): ChapterKey | null {
 }
 
 /** True if a body of radius r at p touches a wall, a closed door, a column, or the edge of the beach. */
-export function blocked(p: V2, r: number, open: ChapterKey[]): boolean {
+export function blocked(p: V2, r: number, open: ChapterKey[], sealed = false): boolean {
   for (const b of BOXES) {
+    if (b.seal && !sealed) continue; // the thread room's entry, shut behind you once IV is written
     if (b.door && open.includes(b.door)) continue;
     const dx = p[0] - Math.min(Math.max(p[0], b.min[0]), b.max[0]), dz = p[1] - Math.min(Math.max(p[1], b.min[1]), b.max[1]);
     if (dx * dx + dz * dz < r * r) return true;

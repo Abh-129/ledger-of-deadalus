@@ -43,7 +43,7 @@ function plaster(g: CanvasRenderingContext2D, W: number, H: number) {
 
 // lapis band on limestone: black rules, a running spiral or a Greek key between them
 function border(g: CanvasRenderingContext2D, W: number, H: number, kind: 'meander' | 'spiral', b: number) {
-  const o = b * 0.14, bw = b * 0.72, rule = Math.max(2, b * 0.06);
+  const o = b * 0.14, bw = b * 0.72, rule = Math.max(3.5, b * 0.07); // black contour 3 to 4 px
   const side = (x0: number, y0: number, x1: number, y1: number) => { // one side of the band, tiles of size bw
     const len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(1, Math.round(len / bw)), u = len / n;
     g.save(); g.translate(x0, y0); g.rotate(Math.atan2(y1 - y0, x1 - x0)); ink(g, rule * 1.5); g.strokeStyle = F.blue;
@@ -60,6 +60,20 @@ function border(g: CanvasRenderingContext2D, W: number, H: number, kind: 'meande
   side(o, o, W - o, o); side(W - o, o, W - o, H - o); side(W - o, H - o, o, H - o); side(o, H - o, o, o); // each side rotated so the motif points inward
   g.restore();
   ink(g, rule * 3); g.strokeStyle = F.blue; g.strokeRect(o + rule * 1.5, o + rule * 1.5, W - 2 * o - rule * 3, H - 2 * o - rule * 3); ink(g, rule); g.strokeRect(o, o, W - 2 * o, H - 2 * o); g.strokeRect(o + bw, o + bw, W - 2 * (o + bw), H - 2 * (o + bw));
+}
+
+/** The shared meander band: one 2 m x 0.5 m tile, lapis key on limestone between black rules; wrap it horizontally. */
+export function friezeTexture() {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 128;
+  const g = c.getContext('2d')!; plaster(g, 512, 128);
+  for (const y of [8, 120]) { ink(g, 4); g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
+  for (const y of [15, 113]) { ink(g, 4); g.strokeStyle = F.blue; g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
+  for (let i = 0; i < 4; i++) {
+    const x = i * 128; g.beginPath();
+    g.moveTo(x + 14, 100); g.lineTo(x + 14, 28); g.lineTo(x + 114, 28); g.lineTo(x + 114, 84); g.lineTo(x + 50, 84); g.lineTo(x + 50, 56); g.lineTo(x + 84, 56);
+    ink(g, 12); g.stroke(); ink(g, 6); g.strokeStyle = F.blue; g.stroke();
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.wrapS = THREE.RepeatWrapping; return t;
 }
 
 export function Fresco(p: {
@@ -95,47 +109,58 @@ export function Fresco(p: {
 }
 
 type Pt = [number, number];
-// outlined limb: black stroke under a thinner skin stroke
+// outlined limb: smooth black stroke under a thinner skin stroke, curving through the joints
 const limb = (g: CanvasRenderingContext2D, pts: Pt[], w: number, fill: string, u: number) => {
-  g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x * u, y * u) : g.moveTo(x * u, y * u)));
-  ink(g, w * u + 2.2 * u); g.stroke(); g.strokeStyle = fill; g.lineWidth = w * u; g.stroke();
+  g.beginPath(); g.moveTo(pts[0][0] * u, pts[0][1] * u);
+  for (let i = 1; i < pts.length - 1; i++) g.quadraticCurveTo(pts[i][0] * u, pts[i][1] * u, (pts[i][0] + pts[i + 1][0]) * u / 2, (pts[i][1] + pts[i + 1][1]) * u / 2);
+  g.lineTo(pts[pts.length - 1][0] * u, pts[pts.length - 1][1] * u);
+  ink(g, w * u + 1.6 * u); g.stroke(); g.strokeStyle = fill; g.lineWidth = w * u; g.stroke();
 };
-// joints in units of h/100, feet at y=0, y up is negative; shoulder (0,-70), hip (0,-38)
+// joints in units of h/100, feet at y=0, y up is negative; shoulder (0,-79), hip (0,-46)
 const ARMS: Record<string, [Pt[], Pt[]]> = {
-  stand: [[[0, -70], [3, -56], [8, -44]], [[0, -70], [-4, -56], [-6, -44]]],
-  reach: [[[0, -70], [12, -70], [26, -72]], [[0, -70], [-6, -60], [-8, -48]]],
-  carry: [[[0, -70], [5, -56], [17, -58]], [[0, -70], [2, -54], [15, -54]]],
-  raise: [[[0, -70], [9, -82], [10, -100]], [[0, -70], [-5, -82], [-8, -98]]],
-  fall: [[[0, -70], [-12, -80], [-24, -92]], [[0, -70], [-6, -86], [-14, -102]]],
-  kneel: [[[0, -66], [8, -54], [20, -50]], [[0, -66], [-2, -52], [10, -44]]],
+  stand: [[[0, -79], [3, -62], [6, -46]], [[0, -79], [-3, -62], [-5, -47]]],
+  reach: [[[0, -79], [12, -78], [27, -80]], [[0, -79], [-5, -66], [-7, -52]]],
+  carry: [[[0, -79], [5, -64], [18, -65]], [[0, -79], [3, -62], [16, -60]]],
+  raise: [[[0, -79], [9, -90], [10, -109]], [[0, -79], [-5, -90], [-8, -107]]],
+  fall: [[[0, -79], [-12, -88], [-24, -100]], [[0, -79], [-6, -94], [-14, -110]]],
+  kneel: [[[0, -79], [8, -66], [20, -62]], [[0, -79], [-2, -64], [10, -56]]],
 };
 export function figure(g: CanvasRenderingContext2D, o: {
   x: number; y: number; h: number; facing: 1 | -1;
   pose: 'stand' | 'reach' | 'carry' | 'fall' | 'kneel' | 'raise'; fill: string; small?: boolean;
 }) {
-  const u = o.h / 100, lw = Math.max(2, o.h * 0.022);
+  const u = o.h / 100, lw = Math.max(1.5, o.h * 0.014);
   g.save(); g.translate(o.x, o.y); g.scale(o.facing, 1);
-  if (o.pose === 'fall') { g.translate(0, -38 * u); g.rotate(-1.15); g.translate(0, 38 * u); }
+  if (o.pose === 'kneel') g.translate(0, 12 * u);
+  if (o.pose === 'fall') { g.translate(0, -46 * u); g.rotate(-1.15); g.translate(0, 46 * u); }
   const legs: [Pt[], Pt[]] = o.pose === 'kneel'
-    ? [[[0, -38], [11, -20], [12, -1]], [[0, -38], [-8, -5], [-24, -2]]]
-    : o.pose === 'fall' ? [[[0, -38], [10, -20], [4, -2]], [[0, -38], [-8, -20], [-16, -6]]]
-    : [[[0, -38], [3, -20], [4, -1]], [[0, -38], [-3, -20], [-7, -1]]];
+    ? [[[0, -46], [12, -30], [11, -13]], [[0, -46], [-8, -18], [-24, -13]]]
+    : o.pose === 'fall' ? [[[0, -46], [10, -26], [5, -2]], [[0, -46], [-8, -26], [-17, -7]]]
+    : [[[0, -46], [3, -24], [3, -1]], [[0, -46], [-2, -24], [-6, -1]]];
   const [a1, a2] = ARMS[o.pose];
-  limb(g, legs[1], 8, o.fill, u); limb(g, a2, 5.5, o.fill, u); // far limbs first
-  g.beginPath(); // torso: broad chest, wasp waist
-  g.moveTo(-6 * u, -72 * u); g.bezierCurveTo(8 * u, -78 * u, 12 * u, -66 * u, 6 * u, -52 * u);
-  g.lineTo(5 * u, -49 * u); g.lineTo(-5 * u, -49 * u); g.lineTo(-6 * u, -62 * u); g.closePath();
+  limb(g, legs[1], 7.6, o.fill, u); limb(g, a2, 4.2, o.fill, u); // far limbs first
+  limb(g, [[1, -82], [1.5, -87]], 3.4, o.fill, u); // neck
+  g.beginPath(); // torso: broad shoulders, narrow waist
+  g.moveTo(-5.5 * u, -80 * u); g.quadraticCurveTo(0.5 * u, -84 * u, 6 * u, -80 * u); g.bezierCurveTo(8 * u, -70 * u, 3 * u, -60 * u, 3.5 * u, -54 * u);
+  g.lineTo(5 * u, -46 * u); g.lineTo(-5 * u, -46 * u); g.lineTo(-3.5 * u, -54 * u); g.bezierCurveTo(-3 * u, -62 * u, -7 * u, -70 * u, -5.5 * u, -80 * u); g.closePath();
   g.fillStyle = o.fill; g.fill(); ink(g, lw); g.stroke();
-  limb(g, legs[0], 8, o.fill, u);
-  g.beginPath(); g.moveTo(-6 * u, -50 * u); g.lineTo(7 * u, -50 * u); g.quadraticCurveTo(9 * u, -40 * u, 12 * u, -27 * u); g.lineTo(-10 * u, -27 * u); g.quadraticCurveTo(-6 * u, -40 * u, -6 * u, -50 * u); g.closePath();
+  limb(g, legs[0], 7.6, o.fill, u);
+  g.beginPath(); g.moveTo(-4.8 * u, -53 * u); g.lineTo(5.6 * u, -53 * u); g.quadraticCurveTo(8 * u, -42 * u, 9.5 * u, -31 * u); g.lineTo(-8 * u, -31 * u); g.quadraticCurveTo(-5 * u, -42 * u, -4.8 * u, -53 * u); g.closePath();
   g.fillStyle = F.blue; g.fill(); ink(g, lw); g.stroke(); // kilt in lapis with a plaster hem
-  g.fillStyle = F.plaster; g.fillRect(-9.5 * u, -31 * u, 21 * u, 2.2 * u);
-  limb(g, a1, 5.5, o.fill, u);
-  const hs = o.small ? 1.35 : 1, hx = 3 * u, hy = -80 * u; // head: long hair streaming back, nose, eye
-  limb(g, [[-1, -80], [-8, -76], [-12, -64]], 4.5 * hs, F.line, u);
-  g.beginPath(); g.ellipse(hx, hy, 5.2 * u * hs, 6.6 * u * hs, 0, 0, 6.28); g.fillStyle = o.fill; g.fill(); ink(g, lw); g.stroke();
-  g.beginPath(); g.moveTo(hx + 4 * u * hs, hy); g.lineTo(hx + 8 * u * hs, hy + 2.5 * u); g.lineTo(hx + 4 * u * hs, hy + 3.5 * u); g.fill(); g.stroke();
-  g.beginPath(); g.arc(hx - 1 * u * hs, hy - 1 * u * hs, 6 * u * hs, Math.PI * 1.05, Math.PI * 1.85); g.lineWidth = 4.5 * u * hs; g.strokeStyle = F.line; g.stroke(); // hair cap
-  g.fillStyle = F.line; g.beginPath(); g.arc(hx + 2.2 * u * hs, hy - 1.2 * u, 0.9 * u, 0, 6.28); g.fill();
+  g.fillStyle = F.plaster; g.fillRect(-7.6 * u, -34 * u, 16.6 * u, 1.8 * u);
+  limb(g, a1, 4.2, o.fill, u);
+  const hs = o.small ? 1.35 : 1, hx = 1.5 * u, hy = -91 * u; // head: small, long curls streaming back, almond eye
+  for (const [dy, c] of [[0, 1], [3, -1], [-3, 1]]) { // three curled locks
+    const p: Pt[] = [[-1.5, -94 + dy * 0.3], [-7 - dy * 0.4, -88 + dy], [-9, -78 + dy], [-6 * c - 2, -70 + dy]];
+    limb(g, p, 2.2 * hs, F.line, u);
+    g.beginPath(); g.arc((-6 * c - 2) * u, (-70 + dy) * u + 1.6 * u, 1.6 * u, 0, 6.28); ink(g, 1.2 * u * hs); g.stroke();
+  }
+  g.beginPath(); g.ellipse(hx, hy, 3.8 * u * hs, 4.8 * u * hs, 0, 0, 6.28); g.fillStyle = o.fill; g.fill(); ink(g, lw); g.stroke();
+  g.beginPath(); g.moveTo(hx + 3.4 * u * hs, hy); g.lineTo(hx + 6 * u * hs, hy + 1.8 * u); g.lineTo(hx + 3.4 * u * hs, hy + 2.6 * u); g.fill(); g.stroke();
+  g.beginPath(); g.arc(hx - 0.6 * u * hs, hy - 0.8 * u * hs, 4.2 * u * hs, Math.PI * 1.05, Math.PI * 1.9); ink(g, 3 * u * hs); g.stroke(); // hair cap
+  const ex = hx + 1.8 * u * hs, ey = hy - 0.6 * u * hs; // almond eye
+  g.beginPath(); g.moveTo(ex - 1.5 * u, ey); g.quadraticCurveTo(ex, ey - 1.7 * u, ex + 1.6 * u, ey - 0.2 * u); g.quadraticCurveTo(ex, ey + 1 * u, ex - 1.5 * u, ey);
+  g.fillStyle = F.plaster; g.fill(); ink(g, Math.max(1, lw * 0.6)); g.stroke();
+  g.fillStyle = F.line; g.beginPath(); g.arc(ex + 0.3 * u, ey - 0.3 * u, 0.6 * u, 0, 6.28); g.fill();
   g.restore();
 }

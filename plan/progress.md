@@ -4,26 +4,26 @@ Written by the main session after every gate, sprint and build run, so a compact
 
 ## Tasks
 Status is one of: done, done_with_concerns, parked, needs_context, skipped, not started.
-- T1: not started (Lane 0: store, copy keys, v1 deletions, check.ts)
-- T2: not started (Lane 0: layout, World, doors, thread, registry, stubs)
-- T3: not started (Lane 0: player, hotspots, prompt, auto walk)
-- T4: not started (Lane 0: Fresco kit, LOOK tokens)
-- T5: not started (Lane 0: apply design direction; waits for Gate 2)
-- T6: not started (Lane A: Saw build)
-- T7: not started (Lane A: Saw frescoes and light; feeds Gate 3)
-- T8: not started (Lane B: Cow build)
-- T9: not started (Lane B: Cow frescoes and light)
-- T10: not started (Lane C: Minotaur chamber build)
-- T11: not started (Lane E: flight rework)
-- T12: not started (Lane C: Minotaur chamber frescoes and light)
-- T13: not started (Lane D: Thread build)
-- T14: not started (Lane D: Thread frescoes and light)
-- T15: not started (Lane E: Wings build)
-- T16: not started (Lane E: Wings frescoes and light)
-- T17: not started (Lane F: Partridge build)
-- T18: not started (Lane F: Partridge fresco and light)
-- T19: not started (Lane Z: integration, full run, perf, fallback, leftovers)
-- T20: not started (Lane Z: release build, credits, claims)
+- T1: done 7d49144..eebe3d4 (Lane 0: store, copy keys, v1 deletions, check.ts)
+- T2: done 8eccd52..446327e (Lane 0: layout, World, doors, thread, registry, stubs)
+- T3: done; review FIX findings fixed in L0-FIX c83dd36 (Enter preventDefault, focus label)
+- T4: done 446915b..16e4fb6 (Lane 0: Fresco kit, LOOK tokens)
+- T5: done_with_concerns 62da298 (Low and room II far wall not measured; figure() refinement moved to T7 by ruling R4)
+- T6: done; review fixes in 4bfeb32
+- T7: done_with_concerns 4bfeb32 (fps not measurable headless; plaster grey-blue under moon)
+- T8: done; review fixes in dd610ba
+- T9: done dd610ba..74d847c (bull fresco redone twice; reads as a horned spotted bull)
+- T10: done; review fixes in 81f1eac
+- T11: done 2093ef1 (review PASS) (Lane E: flight rework)
+- T12: done 81f1eac..3712eac (red shaft faint, LOOK.cost.shaft intensity for T19)
+- T13: done; review fixes in b23fcaa
+- T14: done b23fcaa (map fresco small, 2.2x3 m beside the exit door)
+- T15: done; review fixes in 2ad5aa5
+- T16: done 2ad5aa5 (sun-path fresco high; check on a real GPU in T19)
+- T17: done; review fixes in fa01d57
+- T18: done_with_concerns fa01d57 (sun x2 and Sea fog hardcoded; caption contrast on pale sand -> T19)
+- T19: done (B-RUN logic PASS with only Continue and F, all strings seen, zero console errors; B-STATIC PASS; caption backdrop 0210ffa; B-PERF needs a real GPU)
+- T20: done (title word wrap fix, duplicate Final Balance button dropped, submission set plan/shots/submission/01..08, claims C1-C8 built, C9 waits for a laptop fps number; nothing deployed)
 
 ## Rulings
 Every decision made during the build that the plan did not settle, by Abhinav or by the main session. Mark who decided.
@@ -33,5 +33,7 @@ Every decision made during the build that the plan did not settle, by Abhinav or
 
 ## Gates
 - gate1: "yes to all" (Sun Nov 1 17:51:35 EST 2026)
-- gate2 (design direction): pending
-- gate3 (Saw look test plus fps post on and off): pending
+- gate2 (design direction): "Yes, approve C" (Sun Nov 1 18:17 EST 2026)
+- gate3: "I give you permission to build." (Sun Nov 1 18:23 EST 2026); Mon Nov 2: Abhinav said "Go ahead with the work that was written on the plan", so the look test shots go to him for sign off but do not block lanes B to F
+- Ruling R4 (main, Nov 2): Lane 0 is idle, so the T7 builder may also edit figure() in src/world/Fresco.tsx (proportions only: taller Minoan figure, curved limbs, almond eye, curls, thinner outline, per the 18:47 board note) before the other fresco lanes start.
+- Ruling R5 (Abhinav, Nov 2): walking room to room took 4 to 6 s; walk speed doubled to 4.4 m/s (Shift 6.5), auto walk steers faster, head bob rate halved. Supersedes the 2.2 m/s in plan.md Global Constraints.

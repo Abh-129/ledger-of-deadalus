@@ -13,11 +13,11 @@ const BED: Record<string, string> = { title: 'sea', saw: 'wind', cow: 'workshop'
 
 function Title() {
   const { settings, setSetting, set, begin } = useStore();
-  const letters = [...UI.title];
   return (
     <div className="title-screen">
       <h1 aria-label={UI.title}>
-        {letters.map((ch, i) => <span key={i} aria-hidden className={ch === ' ' ? 'sp' : ''} style={{ animationDelay: `${0.3 + i * 0.07}s` }}>{ch === ' ' ? ' ' : ch}</span>)}
+        {UI.title.split(' ').map((w, wi, ws) => { const i0 = ws.slice(0, wi).join(' ').length + (wi ? 1 : 0); // a word never breaks across lines
+          return <span key={wi} className="word">{[...w].map((ch, j) => <span key={j} aria-hidden style={{ animationDelay: `${0.3 + (i0 + j) * 0.07}s` }}>{ch}</span>)}</span>; })}
       </h1>
       <p className="sub">{UI.subtitle}</p>
       <div className="row">
@@ -46,7 +46,7 @@ export default function Overlay() {
       if (e.code === 'Escape') { useStore.setState({ showSources: false, showSettings: false }); return; }
       if (st.mode !== 'walk' || !st.current || st.showSources) return;
       if (e.target instanceof HTMLButtonElement && (e.code === 'Space' || e.code === 'Enter')) return;
-      if (e.code === 'Space' || e.code === 'Enter') st.advance();
+      if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); st.advance(); } // else the same press clicks the Hud's autofocused Start
     };
     addEventListener('keydown', key);
     return () => removeEventListener('keydown', key);
@@ -65,7 +65,6 @@ export default function Overlay() {
         <Settings />
         {showSources && <SourcesPage />}
       </div>
-      <div id="fx-black" /><div id="fx-flash" />
     </>
   );
 }

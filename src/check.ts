@@ -60,7 +60,7 @@ for (const k of ORDER.slice(0, 5)) { // thread passes each room centre saw..wing
 }
 for (let i = 0; i < THREAD.length - 1; i++) {
   len += dist(THREAD[i], THREAD[i + 1]);
-  for (const b of BOXES) if (!b.door) assert(!hits(THREAD[i], THREAD[i + 1], b), `thread segment ${i} crosses a wall`);
+  for (const b of BOXES) if (!b.door && !b.seal) assert(!hits(THREAD[i], THREAD[i + 1], b), `thread segment ${i} crosses a wall`);
 }
 assert(len >= 70 && len <= 120, `thread length ${len.toFixed(1)} m in [70, 120]`);
 const all = ORDER.slice();
@@ -79,6 +79,7 @@ for (const k of ORDER) {
   const e = entryOf(k); assert(roomAt(e.pos) === k, `entryOf(${k}) is inside the room`);
 }
 assert(!blocked(SPAWN.pos, 0.3, []), 'SPAWN is free');
+{ const sb = BOXES.find((b) => b.seal)!, g: V2 = [(sb.min[0] + sb.max[0]) / 2, (sb.min[1] + sb.max[1]) / 2]; assert(!blocked(g, 0.3, [], false) && blocked(g, 0.3, [], true), 'thread entry is open until IV is written, then sealed'); }
 
 // flight model
 const run = (flap: (f: ReturnType<typeof newFlight>) => boolean) => { const f = newFlight(); while (!f.outcome) step(f, flap(f), 1 / 60); return f; };
