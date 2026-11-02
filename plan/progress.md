@@ -18,8 +18,8 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T12: done 81f1eac..3712eac (red shaft faint, LOOK.cost.shaft intensity for T19)
 - T13: done; review fixes in b23fcaa
 - T14: done b23fcaa (map fresco small, 2.2x3 m beside the exit door)
-- T15: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane E: Wings build)
-- T16: not started (Lane E: Wings frescoes and light)
+- T15: done; review fixes in 2ad5aa5
+- T16: done 2ad5aa5 (sun-path fresco high; check on a real GPU in T19)
 - T17: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane F: Partridge build)
 - T18: not started (Lane F: Partridge fresco and light)
 - T19: not started (Lane Z: integration, full run, perf, fallback, leftovers)
