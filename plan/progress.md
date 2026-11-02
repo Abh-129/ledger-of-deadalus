@@ -9,8 +9,8 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T3: done; review FIX findings fixed in L0-FIX c83dd36 (Enter preventDefault, focus label)
 - T4: done 446915b..16e4fb6 (Lane 0: Fresco kit, LOOK tokens)
 - T5: done_with_concerns 62da298 (Low and room II far wall not measured; figure() refinement moved to T7 by ruling R4)
-- T6: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane A: Saw build)
-- T7: not started (Lane A: Saw frescoes and light; feeds Gate 3)
+- T6: done; review fixes in 4bfeb32
+- T7: done_with_concerns 4bfeb32 (fps not measurable headless; plaster grey-blue under moon)
 - T8: done; review fixes in dd610ba
 - T9: in fix round (bull fresco, alcove) after dd610ba
 - T10: done; review fixes in 81f1eac
