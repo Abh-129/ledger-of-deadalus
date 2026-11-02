@@ -43,7 +43,7 @@ function plaster(g: CanvasRenderingContext2D, W: number, H: number) {
 
 // lapis band on limestone: black rules, a running spiral or a Greek key between them
 function border(g: CanvasRenderingContext2D, W: number, H: number, kind: 'meander' | 'spiral', b: number) {
-  const o = b * 0.14, bw = b * 0.72, rule = Math.max(2, b * 0.06);
+  const o = b * 0.14, bw = b * 0.72, rule = Math.max(3.5, b * 0.07); // black contour 3 to 4 px
   const side = (x0: number, y0: number, x1: number, y1: number) => { // one side of the band, tiles of size bw
     const len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(1, Math.round(len / bw)), u = len / n;
     g.save(); g.translate(x0, y0); g.rotate(Math.atan2(y1 - y0, x1 - x0)); ink(g, rule * 1.5); g.strokeStyle = F.blue;
@@ -60,6 +60,20 @@ function border(g: CanvasRenderingContext2D, W: number, H: number, kind: 'meande
   side(o, o, W - o, o); side(W - o, o, W - o, H - o); side(W - o, H - o, o, H - o); side(o, H - o, o, o); // each side rotated so the motif points inward
   g.restore();
   ink(g, rule * 3); g.strokeStyle = F.blue; g.strokeRect(o + rule * 1.5, o + rule * 1.5, W - 2 * o - rule * 3, H - 2 * o - rule * 3); ink(g, rule); g.strokeRect(o, o, W - 2 * o, H - 2 * o); g.strokeRect(o + bw, o + bw, W - 2 * (o + bw), H - 2 * (o + bw));
+}
+
+/** The shared meander band: one 2 m x 0.5 m tile, lapis key on limestone between black rules; wrap it horizontally. */
+export function friezeTexture() {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 128;
+  const g = c.getContext('2d')!; plaster(g, 512, 128);
+  for (const y of [8, 120]) { ink(g, 4); g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
+  for (const y of [15, 113]) { ink(g, 4); g.strokeStyle = F.blue; g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
+  for (let i = 0; i < 4; i++) {
+    const x = i * 128; g.beginPath();
+    g.moveTo(x + 14, 100); g.lineTo(x + 14, 28); g.lineTo(x + 114, 28); g.lineTo(x + 114, 84); g.lineTo(x + 50, 84); g.lineTo(x + 50, 56); g.lineTo(x + 84, 56);
+    ink(g, 12); g.stroke(); ink(g, 6); g.strokeStyle = F.blue; g.stroke();
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.wrapS = THREE.RepeatWrapping; return t;
 }
 
 export function Fresco(p: {

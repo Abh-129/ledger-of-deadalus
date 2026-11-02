@@ -8,6 +8,13 @@
   --fresco-black: #15110E;
   --olive: #6F7A4E;
   --dim: #8A97A6;
+  --muted: #8A97A6;
+  --red-glow: #D4584A; /* lifted red: Cost light and Cost text on dark surfaces */
+  --bg: #0A121C;
+  --surface: #0E1823;
+  --line: #213141;
+  --text: #E8E1D2;
+  --vellum: #D9DDE0; /* ledger page: cool moonlit vellum, warm inks */
   /* darker shades of the same two hues, for ink on pale paper (contrast) */
   --ochre-ink: #8A5A06;
   --red-ink: #A32A1E;
