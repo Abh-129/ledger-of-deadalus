@@ -43,3 +43,4 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [Nov 2] lane-F/T17fix+T18: done_with_concerns @ fa01d57 | main: conductor check PASS (partridge-hero: slab with raised-arms father, grave, partridge in ditch, dawn). @T19: caption panel contrast over pale sand; sun disc and Sea fog values hardcoded.
 - [Nov 2] lane-B/T9: done @ 74d847c | main: conductor check PASS (cow-hero: horned spotted bull, open alcove, cow on wheels with ochre edges). All twelve chamber tasks done. T19 running.
 - [Nov 2] main: R5 walk speed 2.2 -> 4.4 m/s (Shift 6.5) in Walker.tsx per Abhinav; @T19 B-RUN uses the new speed.
+- [Nov 2] main: dropped both [CONFIRM] marks in writeup.md and the .docx (every chamber has fresco walls; flight playable, B-FLIGHT outcomes checked by reviewers).
