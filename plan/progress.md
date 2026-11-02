@@ -11,11 +11,11 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T5: done_with_concerns 62da298 (Low and room II far wall not measured; figure() refinement moved to T7 by ruling R4)
 - T6: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane A: Saw build)
 - T7: not started (Lane A: Saw frescoes and light; feeds Gate 3)
-- T8: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane B: Cow build)
-- T9: not started (Lane B: Cow frescoes and light)
-- T10: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane C: Minotaur chamber build)
+- T8: done; review fixes in dd610ba
+- T9: in fix round (bull fresco, alcove) after dd610ba
+- T10: done; review fixes in 81f1eac
 - T11: done 2093ef1 (review PASS) (Lane E: flight rework)
-- T12: not started (Lane C: Minotaur chamber frescoes and light)
+- T12: done 81f1eac..3712eac (red shaft faint, LOOK.cost.shaft intensity for T19)
 - T13: done; review fixes in b23fcaa
 - T14: done b23fcaa (map fresco small, 2.2x3 m beside the exit door)
 - T15: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane E: Wings build)
