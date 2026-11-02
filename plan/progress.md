@@ -4,23 +4,23 @@ Written by the main session after every gate, sprint and build run, so a compact
 
 ## Tasks
 Status is one of: done, done_with_concerns, parked, needs_context, skipped, not started.
-- T1: not started (Lane 0: store, copy keys, v1 deletions, check.ts)
-- T2: not started (Lane 0: layout, World, doors, thread, registry, stubs)
-- T3: not started (Lane 0: player, hotspots, prompt, auto walk)
-- T4: not started (Lane 0: Fresco kit, LOOK tokens)
+- T1: done 7d49144..eebe3d4 (Lane 0: store, copy keys, v1 deletions, check.ts)
+- T2: done 8eccd52..446327e (Lane 0: layout, World, doors, thread, registry, stubs)
+- T3: done_with_concerns 028dd9e (review verdict not recorded; re-checked in the cloud session wave 1) (Lane 0: player, hotspots, prompt, auto walk)
+- T4: done 446915b..16e4fb6 (Lane 0: Fresco kit, LOOK tokens)
 - T5: not started (Lane 0: apply design direction; waits for Gate 2)
-- T6: not started (Lane A: Saw build)
+- T6: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane A: Saw build)
 - T7: not started (Lane A: Saw frescoes and light; feeds Gate 3)
-- T8: not started (Lane B: Cow build)
+- T8: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane B: Cow build)
 - T9: not started (Lane B: Cow frescoes and light)
-- T10: not started (Lane C: Minotaur chamber build)
-- T11: not started (Lane E: flight rework)
+- T10: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane C: Minotaur chamber build)
+- T11: done 2093ef1 (review PASS) (Lane E: flight rework)
 - T12: not started (Lane C: Minotaur chamber frescoes and light)
-- T13: not started (Lane D: Thread build)
+- T13: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane D: Thread build)
 - T14: not started (Lane D: Thread frescoes and light)
-- T15: not started (Lane E: Wings build)
+- T15: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane E: Wings build)
 - T16: not started (Lane E: Wings frescoes and light)
-- T17: not started (Lane F: Partridge build)
+- T17: built by Abhinav in 887c85d, unreviewed (cloud session wave 1 reviews it) (Lane F: Partridge build)
 - T18: not started (Lane F: Partridge fresco and light)
 - T19: not started (Lane Z: integration, full run, perf, fallback, leftovers)
 - T20: not started (Lane Z: release build, credits, claims)
@@ -33,5 +33,5 @@ Every decision made during the build that the plan did not settle, by Abhinav or
 
 ## Gates
 - gate1: "yes to all" (Sun Nov 1 17:51:35 EST 2026)
-- gate2 (design direction): pending
-- gate3 (Saw look test plus fps post on and off): pending
+- gate2 (design direction): "Yes, approve C" (Sun Nov 1 18:17 EST 2026)
+- gate3: "I give you permission to build." (Sun Nov 1 18:23 EST 2026); Mon Nov 2: Abhinav said "Go ahead with the work that was written on the plan", so the look test shots go to him for sign off but do not block lanes B to F
