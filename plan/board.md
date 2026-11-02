@@ -45,3 +45,5 @@ GOALS: G1 plan (master-planner) | G2 research (master-finder) | G3 design direct
 - [Nov 2] main: R5 walk speed 2.2 -> 4.4 m/s (Shift 6.5) in Walker.tsx per Abhinav; @T19 B-RUN uses the new speed.
 - [Nov 2] main: dropped both [CONFIRM] marks in writeup.md and the .docx (every chamber has fresco walls; flight playable, B-FLIGHT outcomes checked by reviewers).
 - [Nov 2] main: perf: Experience.tsx store selectors (no full re-render on store change), dpr cap 1.5 -> 1.25 at High, N8AO quality performance. Real fps still to be measured on Abhinav's laptop.
+- [Nov 2] lane-Z/T19: B-RUN PASS (cold load to Final Balance with only Enter and F, 4.4 m/s, no stuck legs, every caption and source in the DOM, zero console errors), B-STATIC PASS. main: verified report.
+- [Nov 2] main/T20: title no longer breaks mid-word (Overlay.tsx word spans, global.css), duplicate "Walk the Labyrinth again" button dropped (ruling T1-c4), submission screenshots 01-08, claims C1-C8 built, C9 open until fps is measured on Abhinav's laptop. Build and check green. Open for Abhinav: fps number, host choice and "go", R1, due date.

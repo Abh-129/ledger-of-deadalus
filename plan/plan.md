@@ -162,14 +162,14 @@ Existing kit the lanes reuse as is: `Prim`, `COL`, `GLOW`, `RED_GLOW`, `SkyDome`
 
 ## Claims we will make
 Writer and judge read this list. Only built claims are said in the present tense.
-- C1 | planned | "You walk one continuous, hand-built Labyrinth in first person, through six chambers in the order of the myth." | proof: check.ts layout asserts (T2) + browser check B-RUN (T19)
-- C2 | planned | "Every caption, source and ledger line on screen comes from the two ancient sources, Ovid and Apollodorus, paraphrased." | proof: check.ts copy asserts (T1) + B-RUN DOM check (T19)
-- C3 | planned | "Ariadne's thread on the floor leads you from chamber to chamber." | proof: check.ts THREAD passes every room centre in ORDER without crossing a wall (T2)
-- C4 | planned | "Each chamber's cost is written into the Ledger, and writing it opens the next door." | proof: check.ts store run (T1) + B-DOOR (T3)
-- C5 | planned | "The flight is playable: too low and the spray takes you, too high and the wax melts." | proof: existing check.ts flight asserts (kept in T1) + B-FLIGHT (T11)
-- C6 | planned | "Nobody gets stuck: every step has Continue, and Follow the thread walks you to the next stop." | proof: B-RUN with only Continue and F (T19)
-- C7 | planned | "All geometry and all fresco paintings are drawn in code; all sound is synthesized in the browser." | proof: public/ contains no model or audio files and no images other than R2 plaster maps; CREDITS.md (T20). If R2 adds textures, say "apart from one public-domain plaster texture".
-- C8 | planned | "It runs without 3D too, as a readable page." | proof: B-STATIC (T19)
+- C1 | built | "You walk one continuous, hand-built Labyrinth in first person, through six chambers in the order of the myth." | proof: check.ts layout asserts (T2) + browser check B-RUN (T19)
+- C2 | built | "Every caption, source and ledger line on screen comes from the two ancient sources, Ovid and Apollodorus, paraphrased." | proof: check.ts copy asserts (T1) + B-RUN DOM check (T19)
+- C3 | built | "Ariadne's thread on the floor leads you from chamber to chamber." | proof: check.ts THREAD passes every room centre in ORDER without crossing a wall (T2)
+- C4 | built | "Each chamber's cost is written into the Ledger, and writing it opens the next door." | proof: check.ts store run (T1) + B-DOOR (T3)
+- C5 | built | "The flight is playable: too low and the spray takes you, too high and the wax melts." | proof: existing check.ts flight asserts (kept in T1) + B-FLIGHT (T11)
+- C6 | built | "Nobody gets stuck: every step has Continue, and Follow the thread walks you to the next stop." | proof: B-RUN with only Continue and F (T19)
+- C7 | built | "All geometry and all fresco paintings are drawn in code; all sound is synthesized in the browser." | proof: public/ contains no model or audio files and no images other than R2 plaster maps; CREDITS.md (T20). If R2 adds textures, say "apart from one public-domain plaster texture".
+- C8 | built | "It runs without 3D too, as a readable page." | proof: B-STATIC (T19)
 - C9 | planned | "Runs at 60 fps on a laptop." | proof: B-PERF measured in T19; say it only with the measured number and machine
 
 ## Review Focus

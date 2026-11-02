@@ -13,11 +13,11 @@ const BED: Record<string, string> = { title: 'sea', saw: 'wind', cow: 'workshop'
 
 function Title() {
   const { settings, setSetting, set, begin } = useStore();
-  const letters = [...UI.title];
   return (
     <div className="title-screen">
       <h1 aria-label={UI.title}>
-        {letters.map((ch, i) => <span key={i} aria-hidden className={ch === ' ' ? 'sp' : ''} style={{ animationDelay: `${0.3 + i * 0.07}s` }}>{ch === ' ' ? ' ' : ch}</span>)}
+        {UI.title.split(' ').map((w, wi, ws) => { const i0 = ws.slice(0, wi).join(' ').length + (wi ? 1 : 0); // a word never breaks across lines
+          return <span key={wi} className="word">{[...w].map((ch, j) => <span key={j} aria-hidden style={{ animationDelay: `${0.3 + (i0 + j) * 0.07}s` }}>{ch}</span>)}</span>; })}
       </h1>
       <p className="sub">{UI.subtitle}</p>
       <div className="row">

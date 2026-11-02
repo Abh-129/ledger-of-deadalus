@@ -22,7 +22,6 @@ export function FinalBalance() {
           <p className="body">{FINAL.body}</p>
           <div className="actions">
             <button className="btn small" onClick={reset}>{FINAL.playAgain}</button>
-            <button className="btn small" onClick={reset}>{FINAL.walk}</button>
             <button className="btn small" onClick={() => set({ showSources: true })}>Sources</button>
           </div>
         </section>

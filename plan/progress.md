@@ -22,8 +22,8 @@ Status is one of: done, done_with_concerns, parked, needs_context, skipped, not 
 - T16: done 2ad5aa5 (sun-path fresco high; check on a real GPU in T19)
 - T17: done; review fixes in fa01d57
 - T18: done_with_concerns fa01d57 (sun x2 and Sea fog hardcoded; caption contrast on pale sand -> T19)
-- T19: not started (Lane Z: integration, full run, perf, fallback, leftovers)
-- T20: not started (Lane Z: release build, credits, claims)
+- T19: done (B-RUN logic PASS with only Continue and F, all strings seen, zero console errors; B-STATIC PASS; caption backdrop 0210ffa; B-PERF needs a real GPU)
+- T20: done (title word wrap fix, duplicate Final Balance button dropped, submission set plan/shots/submission/01..08, claims C1-C8 built, C9 waits for a laptop fps number; nothing deployed)
 
 ## Rulings
 Every decision made during the build that the plan did not settle, by Abhinav or by the main session. Mark who decided.
