@@ -46,7 +46,7 @@ export default function Overlay() {
       if (e.code === 'Escape') { useStore.setState({ showSources: false, showSettings: false }); return; }
       if (st.mode !== 'walk' || !st.current || st.showSources) return;
       if (e.target instanceof HTMLButtonElement && (e.code === 'Space' || e.code === 'Enter')) return;
-      if (e.code === 'Space' || e.code === 'Enter') st.advance();
+      if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); st.advance(); } // else the same press clicks the Hud's autofocused Start
     };
     addEventListener('keydown', key);
     return () => removeEventListener('keydown', key);

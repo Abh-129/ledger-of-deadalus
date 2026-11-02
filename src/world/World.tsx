@@ -92,7 +92,7 @@ function Door({ box }: { box: Box }) {
 
 // Everything that never changes: walls, floors, ceilings, lintels, doors, hall columns, beach.
 const Static = memo(function Static() {
-  const walls = useMemo(() => BOXES.filter((b) => !b.door && !b.post).map((b) => ({ b, g: wallGeo(b) })), []);
+  const walls = useMemo(() => BOXES.filter((b) => !b.door && !b.post && !b.seal).map((b) => ({ b, g: wallGeo(b) })), []);
   const slabs = useMemo(() => FLOORS.map((f) => ({ f, floor: slabGeo(f, true), ceil: f.roof ? slabGeo(f, false) : null })), []);
   const beach = ROOMS.partridge;
   const frieze = useMemo(() => ({ geo: friezeGeo(), mat: new THREE.MeshStandardMaterial({ map: friezeTexture(), color: '#9aa6b8', roughness: 0.9 }) }), []);

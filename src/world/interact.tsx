@@ -22,7 +22,8 @@ export function updateFocus(cam: THREE.Camera, on: boolean) {
       if (d < h.radius && d < bd && v.dot(fwd) > COS30 * d) { best = h; bd = d; }
     }
   }
-  if (best !== focused) { focused = best; useStore.getState().set({ focus: best ? best.label : null }); }
+  const label = best ? best.label : null;
+  if (best !== focused || label !== useStore.getState().focus) { focused = best; useStore.getState().set({ focus: label }); }
 }
 export const useFocused = () => focused?.use();
 

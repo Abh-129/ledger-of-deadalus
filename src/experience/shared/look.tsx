@@ -11,7 +11,9 @@ export const LOOK = {
   stone: { wall: '#3A5F7E', floor: '#2F5472', ceiling: '#16273A', ambient: 0.9, hemiSky: '#C9D6E8', hemiGround: '#10283A', fog: '#10283A', fogDensity: 0.03, minAmbient: 0.85 },
   moon: { color: '#C9D6E8', intensity: 26, distance: 10 },
   craft: { color: COL.ochre, emissive: 2.2 },
-  cost: { color: '#D4584A', intensity: 26, distance: 10 },
+  cost: { color: '#D4584A', intensity: 26, distance: 10, shaft: { intensity: 80, distance: 16, angle: 0.5, penumbra: 0.6, attenuation: 9, anglePower: 5, opacity: 0.5 } },
+  sun: { color: '#F4F8FF', intensity: 900, distance: 15, angle: 0.13, penumbra: 0.4, attenuation: 14, anglePower: 3, opacity: 0.55 },
+  dawn: { key: { color: '#E8E1D2', min: 0.6, range: 2.2 }, hemi: { sky: '#e8c9a0', ground: '#8f7a5c', intensity: 1.3 } },
   sky: { day: ['#6f9fd6', '#a9c8e8', '#e8e1d2'] as [string, string, string], dawn: ['#16304a', '#8a97a6', '#e8c9a0'] as [string, string, string] },
   fresco: { plaster: '#E8E1D2', line: '#15110E', blue: '#2457A0', earth: '#8f7a5c', skin: '#a98a6c', skinPale: '#d6c8b0', green: '#6F7A4E', sea: '#10283A', pxPerM: 256 },
 };
