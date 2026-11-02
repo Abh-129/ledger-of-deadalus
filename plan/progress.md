@@ -36,3 +36,4 @@ Every decision made during the build that the plan did not settle, by Abhinav or
 - gate2 (design direction): "Yes, approve C" (Sun Nov 1 18:17 EST 2026)
 - gate3: "I give you permission to build." (Sun Nov 1 18:23 EST 2026); Mon Nov 2: Abhinav said "Go ahead with the work that was written on the plan", so the look test shots go to him for sign off but do not block lanes B to F
 - Ruling R4 (main, Nov 2): Lane 0 is idle, so the T7 builder may also edit figure() in src/world/Fresco.tsx (proportions only: taller Minoan figure, curved limbs, almond eye, curls, thinner outline, per the 18:47 board note) before the other fresco lanes start.
+- Ruling R5 (Abhinav, Nov 2): walking room to room took 4 to 6 s; walk speed doubled to 4.4 m/s (Shift 6.5), auto walk steers faster, head bob rate halved. Supersedes the 2.2 m/s in plan.md Global Constraints.
